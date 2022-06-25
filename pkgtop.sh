@@ -13,14 +13,12 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
             unit_size = size;
             unit = "KiB";
 
-            if (unit_size > 1024)
-            {
+            if (unit_size > 1024) {
                 unit = "MiB";
                 unit_size = int(unit_size / 1024);
             }
 
-            if (unit_size > 1024)
-            {
+            if (unit_size > 1024) {
                 unit = "GiB";
                 unit_size = int(unit_size / 1024);
             }
@@ -36,8 +34,7 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
         }' | awk 'BEGIN{
             name = "";
         }{
-            if ($1 == "Package:")
-            {
+            if ($1 == "Package:") {
                 name = $2;
             };
 
@@ -46,20 +43,17 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
                 unit_size = size;
                 unit = "B";
 
-                if (unit_size > 1024)
-                {
+                if (unit_size > 1024) {
                     unit = "KiB";
                     unit_size = int(unit_size / 1024);
                 }
 
-                if (unit_size > 1024)
-                {
+                if (unit_size > 1024) {
                     unit = "MiB";
                     unit_size = int(unit_size / 1024);
                 }
 
-                if (unit_size > 1024)
-                {
+                if (unit_size > 1024) {
                     unit = "GiB";
                     unit_size = int(unit_size / 1024);
                 }
@@ -74,8 +68,7 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
         LC_ALL=C pacman -Qi | awk 'BEGIN{
             name = "";
         }{
-            if ($1 == "Name")
-            {
+            if ($1 == "Name") {
                 name = $3;
             }
 
@@ -123,13 +116,11 @@ awk -v max_columns=${max_columns} -v dotted_line="$(printf "%${max_columns}s" | 
     cl_default_bold = "\033[0;1m";
     cl_default = "\033[0m";
 
-    if (!max_bytes)
-    {
+    if (!max_bytes) {
         max_bytes = bytes;
     }
 
-    if (max_columns > 80)
-    {
+    if (max_columns > 80) {
         max_columns = 80;
     }
 
