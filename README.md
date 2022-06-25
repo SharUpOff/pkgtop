@@ -3,7 +3,7 @@ Show largest installed packages
 
 ## Installation
 ```bash
-curl https://raw.githubusercontent.com/SharUpOff/pkgtop/main/src/pkgtop.sh -so - | sudo tee /usr/local/bin/pkgtop > /dev/null
+curl https://raw.githubusercontent.com/SharUpOff/pkgtop/main/dist/pkgtop.sh -so - | sudo tee /usr/local/bin/pkgtop > /dev/null
 ```
 ```bash
 chmod 755 /usr/local/bin/pkgtop
