@@ -45,7 +45,7 @@ The colour output makes it possible to compare installed packages visually:
 - ✅ ArchLinux (TEST OK: 2022-06-25)
 - ✅ OpenWRT (TEST OK: 2022-06-25)
 
-# Contributing
+# Contribution
 🛠 You are welcome to add support for other distributions, fix bugs or improve functionality. Please, do not forget to add tests.
 
 # Testing
