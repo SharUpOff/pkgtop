@@ -7,7 +7,8 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
 (
     # Ubuntu/Debian
     if command -v dpkg-query &> /dev/null; then
-        LC_ALL=C dpkg-query --show --showformat='${Package} ${Installed-Size}\n' | awk '{
+        LC_ALL=C dpkg-query --show --showformat='${Package} ${Installed-Size}\n' |
+        awk '{
             name = $1;
             size = $2;
             unit_size = size;
@@ -29,9 +30,11 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
 
     # OpenWRT
     if command -v opkg &> /dev/null; then
-        LC_ALL=C opkg list-installed | awk '{
+        LC_ALL=C opkg list-installed |
+        awk '{
             system("opkg info $1");
-        }' | awk '{
+        }' |
+        awk '{
             if ($1 == "Package:") {
                 name = $2;
             };
@@ -63,7 +66,8 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
 
     # ArchLinux
     if command -v pacman &> /dev/null; then
-        LC_ALL=C pacman -Qi | awk '{
+        LC_ALL=C pacman -Qi |
+        awk '{
             if ($1 == "Name") {
                 name = $3;
             }
