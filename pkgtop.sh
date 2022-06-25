@@ -15,12 +15,12 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
 
             if (unit_size > 1024) {
                 unit = "MiB";
-                unit_size = int(unit_size / 1024);
+                unit_size = unit_size / 1024;
             }
 
             if (unit_size > 1024) {
                 unit = "GiB";
-                unit_size = int(unit_size / 1024);
+                unit_size = unit_size / 1024;
             }
 
             printf("%d %7.2f %s %s\n", size, unit_size, unit, name);
@@ -45,17 +45,17 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
 
                 if (unit_size > 1024) {
                     unit = "KiB";
-                    unit_size = int(unit_size / 1024);
+                    unit_size = unit_size / 1024;
                 }
 
                 if (unit_size > 1024) {
                     unit = "MiB";
-                    unit_size = int(unit_size / 1024);
+                    unit_size = unit_size / 1024;
                 }
 
                 if (unit_size > 1024) {
                     unit = "GiB";
-                    unit_size = int(unit_size / 1024);
+                    unit_size = unit_size / 1024;
                 }
 
                 printf("%d %7.2f %s %s\n", size, unit_size, unit, name);
