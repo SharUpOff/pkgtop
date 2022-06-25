@@ -1,6 +1,11 @@
 # pkgtop
 Show largest installed packages
 
+## Installation
+```bash
+$ curl https://raw.githubusercontent.com/SharUpOff/pkgtop/main/pkgtop.sh -so - | sudo tee /usr/local/bin/pkgtop > /dev/null
+```
+
 ## Usage
 ```bash
 $ pkgtop 10
