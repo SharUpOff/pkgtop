@@ -15,6 +15,9 @@ quickredis.........................................................  332.95 MiB
 visual-studio-code-bin.............................................  284.89 MiB
 google-chrome......................................................  264.33 MiB
 ```
+
+The colour output makes it possible to compare installed packages visually:
+
 ![screenshot](pkgtop.png)
 
 # Platforms:
