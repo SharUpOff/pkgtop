@@ -45,8 +45,11 @@ The colour output makes it possible to compare installed packages visually:
 - ✅ ArchLinux (TEST OK: 2022-06-25)
 - ✅ OpenWRT (TEST OK: 2022-06-25)
 
+# Contributing
+🛠 You are welcome to add support for other distributions, fix bugs or improve functionality. Please, do not forget to add tests.
+
 # Testing
-There are some regression tests provided for compatible platforms.
+There are some regression tests provided for compatible distributions.
 
 ## Run tests
 ```bash
@@ -67,7 +70,7 @@ pkgtop-test-openwrtorg-1 exited with code 0
 ```
 
 ## How does testing work
-- The actual script is running in a docker container for each of compatible platforms;
+- The actual script is running in a docker container for each of compatible distributions;
 - The current terminal output is compared with previously created reference file:
 ```bash
 bash ./dist/pkgtop.sh 25 80 | diff ./data/ubuntu-22.04.txt -
