@@ -1,5 +1,5 @@
 # pkgtop
-Show largest installed packages
+Show largest installed packages.
 
 ## Installation
 ```bash
@@ -31,7 +31,7 @@ The colour output makes it possible to compare installed packages visually:
 
 ![screenshot](pkgtop.png)
 
-# Compatibility:
+# Compatibility
 - ✅ Ubuntu
   - ✅ 22.04 (TEST OK: 2022-06-25)
   - ✅ 20.04 (TEST OK: 2022-06-25)
