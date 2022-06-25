@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  test-archlinux:
+    image: archlinux:base-devel
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 > /tmp/data/archlinux.txt"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
+  test-ubuntu-22.04:
+    image: ubuntu:22.04
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 > /tmp/data/ubuntu-22.04.txt"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
+  test-ubuntu-20.04:
+    image: ubuntu:20.04
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 > /tmp/data/ubuntu-20.04.txt"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
+  test-ubuntu-18.04:
+    image: ubuntu:20.04
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 > /tmp/data/ubuntu-18.04.txt"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
+  test-ubuntu-16.04:
+    image: ubuntu:16.04
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 > /tmp/data/ubuntu-16.04.txt"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
+  test-ubuntu-14.04:
+    image: ubuntu:16.04
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 > /tmp/data/ubuntu-14.04.txt"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
+  test-debian-11:
+    image: debian:11
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 > /tmp/data/debian-11.txt"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
+  test-debian-10:
+    image: debian:10
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 > /tmp/data/debian-10.txt"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
+  test-debian-9:
+    image: debian:9
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 > /tmp/data/debian-9.txt"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
+  test-openwrtorg:
+    build:
+      context: ./docker/openwrtorg
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 > /tmp/data/openwrtorg.txt"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
