@@ -28,6 +28,34 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
         }'
     fi
 
+    # Fedora/RedHat/CentOS
+    if command -v rpm &> /dev/null; then
+        LC_ALL=C rpm --query --all --queryformat='%{name} %{size}\n' |
+        awk '{
+            name = $1;
+            size = $2;
+            unit_size = size;
+            unit = "B";
+
+            if (unit_size > 1024) {
+                unit = "KiB";
+                unit_size = unit_size / 1024;
+            }
+
+            if (unit_size > 1024) {
+                unit = "MiB";
+                unit_size = unit_size / 1024;
+            }
+
+            if (unit_size > 1024) {
+                unit = "GiB";
+                unit_size = unit_size / 1024;
+            }
+
+            printf("%d %7.2f %s %s\n", size, unit_size, unit, name);
+        }'
+    fi
+
     # OpenWRT
     if command -v opkg &> /dev/null; then
         LC_ALL=C opkg info |

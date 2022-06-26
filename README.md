@@ -42,6 +42,16 @@ The colour output makes it possible to compare installed packages visually:
   - ✅ 11 (TEST OK: 2022-06-25)
   - ✅ 10 (TEST OK: 2022-06-25)
   - ✅ 9 (TEST OK: 2022-06-25)
+- ✅ Fedora
+  - ✅ 37 (TEST OK: 2022-06-26)
+  - ✅ 36 (TEST OK: 2022-06-26)
+  - ✅ 35 (TEST OK: 2022-06-26)
+  - ✅ 34 (TEST OK: 2022-06-26)
+- ✅ RedHat
+  - ✅ 9 (TEST OK: 2022-06-26)
+  - ✅ 8 (TEST OK: 2022-06-26)
+- ✅ CentOS
+  - ✅ 7 (TEST OK: 2022-06-26)
 - ✅ ArchLinux (TEST OK: 2022-06-25)
 - ✅ OpenWRT (TEST OK: 2022-06-26)
 
@@ -57,15 +67,22 @@ docker compose -f docker-tests-run.yml up
 ```
 Output:
 ```bash
-pkgtop-test-debian-11-1 exited with code 0
-pkgtop-test-ubuntu-16.04-1 exited with code 0
 pkgtop-test-ubuntu-22.04-1 exited with code 0
 pkgtop-test-ubuntu-20.04-1 exited with code 0
-pkgtop-test-archlinux-1 exited with code 0
-pkgtop-test-ubuntu-14.04-1 exited with code 0
 pkgtop-test-ubuntu-18.04-1 exited with code 0
-pkgtop-test-debian-9-1 exited with code 0
+pkgtop-test-ubuntu-16.04-1 exited with code 0
+pkgtop-test-ubuntu-14.04-1 exited with code 0
+pkgtop-test-debian-11-1 exited with code 0
 pkgtop-test-debian-10-1 exited with code 0
+pkgtop-test-debian-9-1 exited with code 0
+pkgtop-test-fedora-37-1 exited with code 0
+pkgtop-test-fedora-36-1 exited with code 0
+pkgtop-test-fedora-35-1 exited with code 0
+pkgtop-test-fedora-34-1 exited with code 0
+pkgtop-test-redhat-9-1 exited with code 0
+pkgtop-test-redhat-8-1 exited with code 0
+pkgtop-test-centos-7-1 exited with code 0
+pkgtop-test-archlinux-1 exited with code 0
 pkgtop-test-openwrtorg-1 exited with code 0
 ```
 
