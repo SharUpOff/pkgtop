@@ -30,16 +30,17 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
 
     # OpenWRT
     if command -v opkg &> /dev/null; then
-        LC_ALL=C opkg list-installed |
-        awk '{
-            system("opkg info $1");
-        }' |
+        LC_ALL=C opkg info |
         awk '{
             if ($1 == "Package:") {
                 name = $2;
             };
 
-            if ($1 == "Size:") {
+            if ($1 == "Status:") {
+                status = $NF;
+            }
+
+            if ($1 == "Size:" && status == "installed") {
                 size = $2;
                 unit_size = size;
                 unit = "B";
@@ -98,7 +99,7 @@ max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80
 ) |
 
 # Order by Size
-sort -rnu |
+sort -rn |
 
 # Limit Output
 head -n "${max_lines}" |
