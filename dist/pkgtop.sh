@@ -1,7 +1,19 @@
 #/usr/bin/env bash
 
-max_lines="${1-$[${LINES-$(command -v tput &>/dev/null && tput lines || echo 25)} - 2]}"
-max_columns="${2-${COLUMNS-$(command -v tput &>/dev/null && tput cols || echo 80)}}"
+# assume prompt size as number of lines in PS1
+prompt_lines="$(echo -e "${PS1}" | wc -l)"
+
+# try to get terminal size or assume it as 25x80
+terminal_lines="${LINES:-$(command -v tput &>/dev/null && tput lines || echo 25)}"
+terminal_columns="${COLUMNS:-$(command -v tput &>/dev/null && tput cols || echo 80)}"
+
+# set custom output size
+custom_lines="${1}"
+custom_columns="${2}"
+
+# subtract prompt height from terminal height
+max_lines="${custom_lines:-$[${terminal_lines} - ${prompt_lines}]}"
+max_columns="${custom_columns:-${terminal_columns}}"
 
 # Create Table: %{size}d %7.2{unit_size}f %{unit}s %{name}s
 (
