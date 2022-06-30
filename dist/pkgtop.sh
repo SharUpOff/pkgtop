@@ -1,5 +1,10 @@
 #/usr/bin/env bash
 
+# source .bashrc (if exists) to import PS1
+if [ -f ~/.bashrc ]; then
+    source ~/.bashrc &> /dev/null
+fi
+
 # assume prompt size as number of lines in PS1
 prompt_lines="$(echo -e "${PS1}" | wc -l)"
 
