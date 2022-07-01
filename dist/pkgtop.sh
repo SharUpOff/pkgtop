@@ -11,6 +11,7 @@ LIMIT_COLUMNS=80
 # custom lines and columns
 max_lines="${1}"
 max_columns="${2}"
+skip_lines="${3-0}"
 
 # get terminal size if at least one of max_lines or max_columns is not set
 if [ -z "${max_lines}" ] || [ -z "${max_columns}" ]; then
@@ -182,6 +183,9 @@ fi
 
 # Order by Size
 sort -rn |
+
+# Skip Lines
+tail -n "+$[1 + skip_lines]" |
 
 # Limit Output
 head -n "${max_lines}" |
