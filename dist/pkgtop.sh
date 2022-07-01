@@ -1,24 +1,58 @@
 #/usr/bin/env bash
+# Description: Show largest installed packages
+# Author: SharUpOff<sharupoff@efstudios.org>
+# License: GPLv3
 
-# source .bashrc (if exists) to import PS1
-if [ -f ~/.bashrc ]; then
-    source ~/.bashrc &> /dev/null
+# default lines and columns
+DEFAULT_LINES=25
+DEFAULT_COLUMNS=80
+LIMIT_COLUMNS=80
+
+# custom lines and columns
+max_lines="${1}"
+max_columns="${2}"
+
+# get terminal size if at least one of max_lines or max_columns is not set
+if [ -z "${max_lines}" ] || [ -z "${max_columns}" ]; then
+
+    # try to refresh LINES and COLUMNS if at least one of them is not set
+    if [ -z "${LINES}" ] || [ -z "${COLUMNS}" ]; then
+        if command -v shopt &> /dev/null; then
+            # store current checkwinsize state
+            RESTORE_SHOPT_CHECKWINSIZE="$(shopt -p checkwinsize)"
+            # allow bash to refresh LINES and COLUMNS after every external command
+            shopt -s checkwinsize
+            # run any external command to refresh LINES and COLUMNS
+            cat /dev/null
+            # restore previous checkwinsize state
+            ${RESTORE_SHOPT_CHECKWINSIZE}
+        fi
+    fi
+
+    # get number of lines if the custom value is not set
+    if [ -z "${max_lines}" ]; then
+        # source .bashrc (if exists) to import bash prompt if PS1 is not set
+        if [ -z "${PS1}" ] && [ -f ~/.bashrc ]; then
+            source ~/.bashrc &> /dev/null
+        fi
+
+        # assume prompt size as number of lines in PS1
+        prompt_lines="$(echo -e "${PS1}" | wc -l)"
+
+        # try to get the number of terminal lines or use default
+        terminal_lines="${LINES:-$(command -v tput &>/dev/null && tput lines || echo "${DEFAULT_LINES}")}"
+
+        # subtract prompt height from terminal height
+        max_lines="$[${terminal_lines} - ${prompt_lines}]"
+    fi
+
+    # get number of columns if the custom value is not set
+    if [ -z "${max_columns}" ]; then
+        # try to get the number of terminal columns or use default
+        max_columns="${COLUMNS:-$(command -v tput &>/dev/null && tput cols || echo "${DEFAULT_COLUMNS}")}"
+    fi
 fi
 
-# assume prompt size as number of lines in PS1
-prompt_lines="$(echo -e "${PS1}" | wc -l)"
-
-# try to get terminal size or assume it as 25x80
-terminal_lines="${LINES:-$(command -v tput &>/dev/null && tput lines || echo 25)}"
-terminal_columns="${COLUMNS:-$(command -v tput &>/dev/null && tput cols || echo 80)}"
-
-# set custom output size
-custom_lines="${1}"
-custom_columns="${2}"
-
-# subtract prompt height from terminal height
-max_lines="${custom_lines:-$[${terminal_lines} - ${prompt_lines}]}"
-max_columns="${custom_columns:-${terminal_columns}}"
 
 # Create Table: %{size}d %7.2{unit_size}f %{unit}s %{name}s
 (
