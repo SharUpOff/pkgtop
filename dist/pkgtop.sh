@@ -50,6 +50,9 @@ if [ -z "${max_lines}" ] || [ -z "${max_columns}" ]; then
     if [ -z "${max_columns}" ]; then
         # try to get the number of terminal columns or use default
         max_columns="${COLUMNS:-$(command -v tput &>/dev/null && tput cols || echo "${DEFAULT_COLUMNS}")}"
+
+        # limit columns
+        max_columns="$((max_columns > LIMIT_COLUMNS ? LIMIT_COLUMNS : max_columns))"
     fi
 fi
 
@@ -198,10 +201,6 @@ awk -v max_columns=${max_columns} -v dotted_line="$(printf "%${max_columns}s" | 
 
     if (!max_bytes) {
         max_bytes = bytes;
-    }
-
-    if (max_columns > 80) {
-        max_columns = 80;
     }
 
     columns = int(bytes / max_bytes * max_columns);
