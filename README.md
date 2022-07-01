@@ -31,6 +31,42 @@ The colour output makes it possible to compare installed packages visually:
 
 ![screenshot](pkgtop.png)
 
+## Arguments
+```bash
+$ pkgtop [count] [width] [skip]
+```
+
+## Features
+- Follow terminal and prompt dimensions;
+- Specify results count:
+  ```bash
+  $ pkgtop 3
+  libc6..............................................................   13.27 MiB 
+  perl-base..........................................................    7.59 MiB 
+  coreutils..........................................................    6.95 MiB 
+  ```
+- Specify width:
+  ```bash
+  $ pkgtop 3 42
+  libc6........................   13.27 MiB 
+  perl-base....................    7.59 MiB 
+  coreutils....................    6.95 MiB 
+  ```
+- Skip results:
+  ```bash
+  $ pkgtop 3 42 2
+  coreutils....................    6.95 MiB 
+  dpkg.........................    6.58 MiB 
+  libssl3......................    5.69 MiB 
+  ```
+- Skip arguments:
+  ```bash
+  $ pkgtop 3 "" 2
+  coreutils..........................................................    6.95 MiB 
+  dpkg...............................................................    6.58 MiB 
+  libssl3............................................................    5.69 MiB 
+  ```
+
 # Compatibility
 - ✅ Ubuntu
   - ✅ 22.04 (TEST OK: 2022-06-25)
