@@ -110,3 +110,17 @@ services:
     volumes:
       - ./dist:/tmp/dist:ro
       - ./data:/tmp/data:ro
+  opensuse-tumbleweed:
+    build:
+      context: ./docker/opensuse/tumbleweed
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 | diff /tmp/data/opensuse-tumbleweed.txt -"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data
+  opensuse-leap-15:
+    build:
+      context: ./docker/opensuse/leap/15
+    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 | diff /tmp/data/opensuse-leap-15.txt -"]
+    volumes:
+      - ./dist:/tmp/dist:ro
+      - ./data:/tmp/data

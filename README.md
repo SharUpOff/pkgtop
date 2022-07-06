@@ -88,6 +88,10 @@ $ pkgtop [count] [width] [skip]
   - ✅ 8 (TEST OK: 2022-06-26)
 - ✅ CentOS
   - ✅ 7 (TEST OK: 2022-06-26)
+- ✅ OpenSUSE
+  - ✅ tumbleweed (TEST OK: 2022-07-06)
+  - ✅ leap
+    - ✅ 15 (TEST OK: 2022-07-06)
 - ✅ ArchLinux (TEST OK: 2022-06-25)
 - ✅ OpenWRT (TEST OK: 2022-06-26)
 

@@ -83,7 +83,7 @@ fi
         }'
     fi
 
-    # Fedora/RedHat/CentOS
+    # Fedora/RedHat/CentOS/OpenSUSE
     if command -v rpm &> /dev/null; then
         LC_ALL=C rpm --query --all --queryformat='%{name} %{size}\n' |
         awk '{
