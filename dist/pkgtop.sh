@@ -58,15 +58,15 @@ if [ -z "${max_lines}" ] || [ -z "${max_columns}" ]; then
 fi
 
 
-# Create Table: %{size}d %7.2{unit_size}f %{unit}s %{name}s
+# Create Table: %{bytes}d %7.2{unit_size}f %{unit}s %{name}s
 (
     # Ubuntu/Debian
     if command -v dpkg-query &> /dev/null; then
         LC_ALL=C dpkg-query --show --showformat='${Package} ${Installed-Size}\n' |
         awk '{
             name = $1;
-            size = $2;
-            unit_size = size;
+            bytes = $2 * 1024;
+            unit_size = $2;
             unit = "KiB";
 
             if (unit_size > 1024) {
@@ -79,7 +79,7 @@ fi
                 unit_size = unit_size / 1024;
             }
 
-            printf("%d %7.2f %s %s\n", size, unit_size, unit, name);
+            printf("%d %7.2f %s %s\n", bytes, unit_size, unit, name);
         }'
     fi
 
@@ -88,8 +88,8 @@ fi
         LC_ALL=C rpm --query --all --queryformat='%{name} %{size}\n' |
         awk '{
             name = $1;
-            size = $2;
-            unit_size = size;
+            bytes = $2;
+            unit_size = $2;
             unit = "B";
 
             if (unit_size > 1024) {
@@ -107,7 +107,7 @@ fi
                 unit_size = unit_size / 1024;
             }
 
-            printf("%d %7.2f %s %s\n", size, unit_size, unit, name);
+            printf("%d %7.2f %s %s\n", bytes, unit_size, unit, name);
         }'
     fi
 
@@ -124,8 +124,8 @@ fi
             }
 
             if ($1 == "Size:" && status == "installed") {
-                size = $2;
-                unit_size = size;
+                bytes = $2;
+                unit_size = $2;
                 unit = "B";
 
                 if (unit_size > 1024) {
@@ -143,7 +143,7 @@ fi
                     unit_size = unit_size / 1024;
                 }
 
-                printf("%d %7.2f %s %s\n", size, unit_size, unit, name);
+                printf("%d %7.2f %s %s\n", bytes, unit_size, unit, name);
             }
         }'
     fi
@@ -162,20 +162,20 @@ fi
 
                 switch (unit) {
                     case "B":
-                        size = unit_size;
+                        bytes = unit_size;
                         break;
                     case "KiB":
-                        size = unit_size * 1024;
+                        bytes = unit_size * 1024;
                         break;
                     case "MiB":
-                        size = unit_size * 1024 * 1024;
+                        bytes = unit_size * 1024 * 1024;
                         break;
                     case "GiB":
-                        size = unit_size * 1024 * 1024 * 1024;
+                        bytes = unit_size * 1024 * 1024 * 1024;
                         break;
                 }
 
-                printf("%d %7.2f %s %s\n", size, unit_size, unit, name);
+                printf("%d %7.2f %s %s\n", bytes, unit_size, unit, name);
             }
         }'
     fi
