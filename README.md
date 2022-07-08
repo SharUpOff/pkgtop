@@ -11,7 +11,7 @@ sudo chmod 755 /usr/local/bin/pkgtop
 
 ## Usage
 ```bash
-pkgtop 10
+pkgtop
 ```
 Output:
 ```
@@ -33,38 +33,73 @@ The colour output makes it possible to compare installed packages visually:
 
 ## Arguments
 ```bash
-$ pkgtop [count] [width] [skip]
+$ pkgtop [<lines> | --lines <lines> | --lines=<lines> | -l <lines>] [<columns> | --columns <columns> | --columns=<columns> | -c <columns>] [--exclude <name> | --exclude=<name> | -e <name>] [--exclude <name2> | --exclude=<name2> | -e <name2>] ... [--show-other | -o] [--show-total | -t] [--show-all | -a] [--help | -h]
 ```
 
 ## Features
-- Follow terminal and prompt dimensions;
-- Specify results count:
+- Follow terminal and prompt dimensions by default;
+- Specify lines:
   ```bash
-  $ pkgtop 3
+  $ pkgtop 5
   libc6..............................................................   13.27 MiB 
   perl-base..........................................................    7.59 MiB 
   coreutils..........................................................    6.95 MiB 
+  dpkg...............................................................    6.58 MiB 
+  libssl3............................................................    5.69 MiB 
   ```
-- Specify width:
+- Specify columns:
   ```bash
-  $ pkgtop 3 42
+  $ pkgtop 5 42
   libc6........................   13.27 MiB 
   perl-base....................    7.59 MiB 
-  coreutils....................    6.95 MiB 
-  ```
-- Skip results:
-  ```bash
-  $ pkgtop 3 42 2
   coreutils....................    6.95 MiB 
   dpkg.........................    6.58 MiB 
   libssl3......................    5.69 MiB 
   ```
-- Skip arguments:
+- Show other:
   ```bash
-  $ pkgtop 3 "" 2
-  coreutils..........................................................    6.95 MiB 
-  dpkg...............................................................    6.58 MiB 
-  libssl3............................................................    5.69 MiB 
+  $ pkgtop 5 42 --show-other
+  [other]......................   61.35 MiB 
+  libc6........................   13.27 MiB 
+  perl-base....................    7.59 MiB 
+  coreutils....................    6.95 MiB 
+  dpkg.........................    6.58 MiB 
+  ```
+- Show total:
+  ```bash
+  $ pkgtop 5 42 --show-other --show-total
+  [other]......................   67.93 MiB 
+  libc6........................   13.27 MiB 
+  perl-base....................    7.59 MiB 
+  coreutils....................    6.95 MiB 
+  [total]......................   95.74 MiB 
+  ```
+- Exclude package:
+  ```bash
+  $ pkgtop 5 42 --show-other --show-total --exclude libc6
+  [other]......................   61.35 MiB 
+  perl-base....................    7.59 MiB 
+  coreutils....................    6.95 MiB 
+  dpkg.........................    6.58 MiB 
+  [total]......................   82.46 MiB 
+  ```
+- Exclude multiple packages:
+  ```bash
+  $ pkgtop 5 42 --show-other --show-total --exclude libc6 --exclude coreutils
+  [other]......................   55.67 MiB 
+  perl-base....................    7.59 MiB 
+  dpkg.........................    6.58 MiB 
+  libssl3......................    5.69 MiB 
+  [total]......................   75.52 MiB 
+  ```
+- Do not limit the output:
+  ```bash
+  $ pkgtop --show-all
+  libc6..............................................................   13.27 MiB 
+  perl-base..........................................................    7.59 MiB
+  <...>
+  libtirpc-common....................................................   32.00 KiB 
+  libaudit-common....................................................   23.00 KiB 
   ```
 
 # Compatibility
@@ -109,21 +144,7 @@ Output:
 ```bash
 pkgtop-test-ubuntu-22.04-1 exited with code 0
 pkgtop-test-ubuntu-20.04-1 exited with code 0
-pkgtop-test-ubuntu-18.04-1 exited with code 0
-pkgtop-test-ubuntu-16.04-1 exited with code 0
-pkgtop-test-ubuntu-14.04-1 exited with code 0
-pkgtop-test-debian-11-1 exited with code 0
-pkgtop-test-debian-10-1 exited with code 0
-pkgtop-test-debian-9-1 exited with code 0
-pkgtop-test-fedora-37-1 exited with code 0
-pkgtop-test-fedora-36-1 exited with code 0
-pkgtop-test-fedora-35-1 exited with code 0
-pkgtop-test-fedora-34-1 exited with code 0
-pkgtop-test-redhat-9-1 exited with code 0
-pkgtop-test-redhat-8-1 exited with code 0
-pkgtop-test-centos-7-1 exited with code 0
-pkgtop-test-archlinux-1 exited with code 0
-pkgtop-test-openwrtorg-1 exited with code 0
+...
 ```
 
 ## How does testing work
