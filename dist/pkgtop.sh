@@ -8,19 +8,38 @@ DEFAULT_LINES=25
 DEFAULT_COLUMNS=80
 LIMIT_COLUMNS=80
 
+# the options array is used to store the values parsed from the command line arguments.
 declare -A options
 
-# custom lines and columns
-options[lines]="$(egrep '^-*[0-9]+$' <<< "${1}")"
-
-if [ ! -z "${options[lines]}" ]; then
-    options[columns]="$(egrep '^-*[0-9]+$' <<< "${2}")"
-fi
-
+# set default options
 options[exclude]=""
 options[other]=0
 options[total]=0
 
+# process positional arguments: [lines [columns]]
+parse_number()
+{
+    ##################### the input string:
+    #
+    #      +------------- can contain one minus sign at the beginning;
+    #      |      +------ the second character should be a digit 1 to 9;
+    #      |      |    +- can only contain digits 0 to 9 until the end;
+    #      |      |    |
+    egrep '^-{0,1}[1-9][0-9]*$' <<< "${1}"
+
+    return $?
+}
+
+# set the lines option if the first argument is a number
+options[lines]="$(parse_number "${1}")"
+
+# process the second argument only if lines option is set
+if [ ! -z "${options[lines]}" ]; then
+    # set the columns option if the second argument is a number
+    options[columns]="$(parse_number "${2}")"
+fi
+
+# process keyword arguments
 for arg in $@; do
     if [ ! -z "${option_name}" ]; then
         unset_option_name=1
