@@ -33,7 +33,7 @@ The colour output makes it possible to compare installed packages visually:
 
 ## Arguments
 ```bash
-$ pkgtop [<lines> | --lines <lines> | --lines=<lines> | -l <lines>] [<columns> | --columns <columns> | --columns=<columns> | -c <columns>] [--exclude <name> | --exclude=<name> | -e <name>] [--exclude <name2> | --exclude=<name2> | -e <name2>] ... [--show-other | -o] [--show-total | -t] [--show-all | -a] [--help | -h]
+$ pkgtop [lines] [columns] [--exclude <name>] [--show-other] [--show-total] [--show-all] [--help]
 ```
 
 ## Features

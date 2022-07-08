@@ -28,17 +28,14 @@ for arg in $@; do
 
     case $arg in
         --help|-h)
-            echo -n "Usage: ${0} [<lines> | --lines <lines> | --lines=<lines> | -l <lines>] "
-            echo -n "[<columns> | --columns <columns> | --columns=<columns> | -c <columns>] "
-            echo -n "[--exclude <name> | --exclude=<name> | -e <name>] "
-            echo -n "[--exclude <name2> | --exclude=<name2> | -e <name2>] ... "
-            echo "[--show-other | -o] [--show-total | -t] [--show-all | -a] [--help | -h]"
+            echo -n "Usage: ${0} [lines] [columns] "
+            echo "[--exclude <name>] [--show-other] [--show-total] [--show-all] [--help]"
             echo
-            echo "  <lines> --lines <lines> --lines=<lines> -l <lines>"
+            echo "  [lines] --lines <lines> --lines=<lines> -l <lines>"
             echo "    Show specified number of lines (results)."
             echo "    If [other] and/or [total] lines are enabled they are also included in the number of lines."
             echo
-            echo "  <columns> --columns <columns> --columns=<columns> -c <columns>"
+            echo "  [columns] --columns <columns> --columns=<columns> -c <columns>"
             echo "    Show specified number of columns (width)."
             echo
             echo "  --show-other -o"
@@ -55,7 +52,7 @@ for arg in $@; do
             echo "    Do not limit the output. Display all packages instead."
             echo "    <!> Excluded packages stay hidden even if all results should be displayed."
             echo
-            echo "  --exclude <name> --exclude=<name> -e <name> --exclude <name2> --exclude=<name2> -e <name2> ..."
+            echo "  --exclude <name> --exclude=<name> -e <name>"
             echo "    Exclude specified package(s)."
             echo "    The argument can be specified multiple times."
             echo "    <!> Excluded packages do not count towards [total] or [other] results."
