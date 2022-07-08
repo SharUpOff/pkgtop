@@ -41,8 +41,12 @@ fi
 
 # process keyword arguments
 for arg in $@; do
-    if [ ! -z "${option_name}" ]; then
-        unset_option_name=1
+
+    # an option context may be declared by the previous argument,
+    # in which case the current argument is the value for that option
+    if [ ! -z "${context[name]}" ]; then
+        # mark the option context to be closed after processing the current argument
+        context[close]=1
     fi
 
     case $arg in
@@ -92,39 +96,46 @@ for arg in $@; do
             options[lines]=-1;
         ;;
         --lines|-l)
-            option_name='lines'
+            declare -A context
+            context[name]='lines'
         ;;
         --lines=*)
             options[lines]="${arg/--lines=}"
         ;;
         --columns|-c)
-            option_name='columns'
+            declare -A context
+            context[name]='columns'
         ;;
         --columns=*)
             options[columns]="${arg/--columns=}"
         ;;
         --exclude|-e)
-            option_name='exclude'
-            option_multiple=1
+            declare -A context
+            context[name]='exclude'
+            context[multiple]=1
         ;;
         --exclude=*)
             options[exclude]="${options[exclude]} ${arg/--exclude=}"
         ;;
         *)
-            if [ ! -z "${option_name}" ]; then
-                if [ ! -z "${option_multiple}" ]; then
-                    options["${option_name}"]="${options["${option_name}"]} ${arg}"
+            # an option context may be declared by the previous argument,
+            # in which case the current argument is the value for that option
+            if [ ! -z "${context[name]}" ]; then
+                # the option can take multiple values if the multiple flag is set in the context
+                if [ ! -z "${context[multiple]}" ]; then
+                    options["${context[name]}"]="${options["${option_name}"]} ${arg}"
                 else
-                    options["${option_name}"]="${arg}"
+                    options["${context[name]}"]="${arg}"
                 fi
             fi
         ;;
     esac
 
-    if [ ! -z "${option_name}" ] && [ ! -z "${unset_option_name}" ]; then
-        unset option_name
-        unset option_multiple
-        unset unset_option_name
+    # an option context may be declared by the previous argument,
+    # in which case the current argument is the value for that option
+    if [ ! -z "${context[close]}" ]; then
+        # now the time to close the option context
+        unset context
     fi
 done
 
