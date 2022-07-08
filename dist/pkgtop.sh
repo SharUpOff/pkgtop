@@ -16,6 +16,10 @@ options[exclude]=""
 options[other]=0
 options[total]=0
 
+# detect tty
+test ! -t 1
+options[tty]=$?
+
 # process positional arguments: [lines [columns]]
 parse_number()
 {
@@ -52,7 +56,7 @@ for arg in $@; do
     case $arg in
         --help|-h)
             echo -n "Usage: ${0} [lines [columns]] "
-            echo "[--exclude <name>] [--mark <name>] [--show-other] [--show-total] [--show-all] [--help]"
+            echo "[--exclude <name>] [--mark <name>] [--show-other] [--show-total] [--show-all] [--safe] [--help]"
             echo
             echo "  [lines] --lines <lines> --lines=<lines> -l <lines>"
             echo "    Show specified number of lines (results)."
@@ -74,6 +78,9 @@ for arg in $@; do
             echo "  --show-all -a"
             echo "    Do not limit the output. Display all packages instead."
             echo "    <!> Excluded packages stay hidden even if all results should be displayed."
+            echo
+            echo "  --safe -s"
+            echo "    Preserve colour output."
             echo
             echo "  --exclude <name> --exclude=<name> -e <name>"
             echo "    Exclude specified package(s)."
@@ -97,6 +104,9 @@ for arg in $@; do
         ;;
         --show-all|-a)
             options[lines]=-1;
+        ;;
+        --safe|-s)
+            options[tty]=1;
         ;;
         --lines|-l)
             declare -A context
@@ -341,6 +351,7 @@ awk \
     -v max_columns="${options[columns]}" \
     -v mark_string="${options[mark]}" \
     -v dotted_line="$(printf "%${options[columns]}s" | tr " " ".")" \
+    -v tty="${options[tty]}" \
     -v cl_red_bold="\033[1;41m" \
     -v cl_green_bold="\033[1;42m" \
     -v cl_yellow_bold="\033[1;43m" \
@@ -377,17 +388,23 @@ awk \
 
         line = sprintf(sprintf("%%.%ds %%7.2f %%3s%%s", max_columns - margin_right), name dotted_line, size, unit, mark);
 
-        color = cl_green_bold;
+        if (tty) {
+            color = cl_green_bold;
+            start_line = substr(line, 1, columns);
+            end_line = substr(line, columns + 1);
 
-        if (bytes / max_bytes > 0.5) {
-            color = cl_yellow_bold;
+            if (bytes / max_bytes > 0.5) {
+                color = cl_yellow_bold;
+            }
+
+            if (bytes / max_bytes > 0.75) {
+                color = cl_red_bold;
+            }
+
+            printf("%s%s%s%s%s\n", color, start_line, cl_default_bold, end_line, cl_default);
+        } else {
+            print(line);
         }
-
-        if (bytes / max_bytes > 0.75) {
-            color = cl_red_bold;
-        }
-
-        printf("%s%s%s%s%s\n", color, substr(line, 1, columns), cl_default_bold, substr(line, columns + 1), cl_default);
     }'
 
 exit $?
