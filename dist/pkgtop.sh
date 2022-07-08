@@ -52,7 +52,7 @@ for arg in $@; do
     case $arg in
         --help|-h)
             echo -n "Usage: ${0} [lines [columns]] "
-            echo "[--exclude <name>] [--show-other] [--show-total] [--show-all] [--help]"
+            echo "[--exclude <name>] [--mark <name>] [--show-other] [--show-total] [--show-all] [--help]"
             echo
             echo "  [lines] --lines <lines> --lines=<lines> -l <lines>"
             echo "    Show specified number of lines (results)."
@@ -80,6 +80,9 @@ for arg in $@; do
             echo "    The argument can be specified multiple times."
             echo "    <!> Excluded packages do not count towards [total] or [other] results."
             echo "    <!> Excluded packages stay hidden even if all results should be displayed."
+            echo
+            echo "  --mark <name> --mark=<name> -m <name>"
+            echo "    Mark specified package(s)."
             echo
             echo "  --help -h"
             echo "    Show this info."
@@ -116,6 +119,14 @@ for arg in $@; do
         ;;
         --exclude=*)
             options[exclude]="${options[exclude]} ${arg/--exclude=}"
+        ;;
+        --mark|-m)
+            declare -A context
+            context[name]='mark'
+            context[multiple]=1
+        ;;
+        --mark=*)
+            options[mark]="${options[mark]} ${arg/--mark=}"
         ;;
         *)
             # an option context may be declared by the previous argument,
@@ -328,13 +339,24 @@ sort -rn |
 # Render Table
 awk \
     -v max_columns="${options[columns]}" \
+    -v mark_string="${options[mark]}" \
     -v dotted_line="$(printf "%${options[columns]}s" | tr " " ".")" \
     -v cl_red_bold="\033[1;41m" \
     -v cl_green_bold="\033[1;42m" \
     -v cl_yellow_bold="\033[1;43m" \
     -v cl_default_bold="\033[0;1m" \
     -v cl_default="\033[0m" \
-    '{
+    'BEGIN {
+        # convert string into array for marks
+        split(mark_string, mark_list, " ");
+
+        # convert array into dict for marks
+        for (name in mark_list) {
+            mark_dict[mark_list[name]] = name;
+        }
+    }
+
+    {
         bytes = $1;
         size = $2;
         unit = $3;
@@ -346,7 +368,14 @@ awk \
 
         columns = int(bytes / max_bytes * max_columns);
         margin_right = 7 + 3 + 3;  // 7 size + 3 unit + 3 space characters
-        line = sprintf(sprintf("%%.%ds %%7.2f %%3s ", max_columns - margin_right), name dotted_line, size, unit);
+
+        if (name in mark_dict) {
+            mark = "<";
+        } else {
+            mark = " ";
+        }
+
+        line = sprintf(sprintf("%%.%ds %%7.2f %%3s%%s", max_columns - margin_right), name dotted_line, size, unit, mark);
 
         color = cl_green_bold;
 
