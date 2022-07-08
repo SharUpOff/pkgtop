@@ -123,7 +123,7 @@ for arg in $@; do
             if [ ! -z "${context[name]}" ]; then
                 # the option can take multiple values if the multiple flag is set in the context
                 if [ ! -z "${context[multiple]}" ]; then
-                    options["${context[name]}"]="${options["${option_name}"]} ${arg}"
+                    options["${context[name]}"]="${options["${context[name]}"]} ${arg}"
                 else
                     options["${context[name]}"]="${arg}"
                 fi
