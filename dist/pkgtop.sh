@@ -183,57 +183,28 @@ if [ -z "${options[lines]}" ] || [ -z "${options[columns]}" ]; then
     fi
 fi
 
-
-AWK_UNIT_SIZE_FUNCTION='function bytes_to_unit_size(bytes)
-{
-    units[0] = "B";
-    units[1] = "KiB";
-    units[2] = "MiB";
-    units[3] = "GiB";
-    units[4] = "TiB";
-
-    for (exponent = 0; exponent < 5; exponent++)
-    {
-        unit_size = bytes / 1024 ^ exponent;
-
-        if (unit_size < 1024)
-        {
-            break;
-        }
-    }
-
-    return sprintf("%7.2f %s", unit_size, units[exponent]);
-}'
-
-
-# Create Table: %{bytes}d %7.2{unit_size}f %{unit}s %{name}s
+# Create Table: %{bytes}d %{name}s
 (
     # Ubuntu/Debian
     if command -v dpkg-query &> /dev/null; then
         LC_ALL=C dpkg-query --show --showformat='${Package} ${Installed-Size}\n' |
-        awk "${AWK_UNIT_SIZE_FUNCTION}"'{
+        awk '{
             name = $1;
             bytes = $2 * 1024;
 
-            printf("%d %s %s\n", bytes, bytes_to_unit_size(bytes), name);
+            printf("%d %s\n", bytes, name);
         }'
     fi
 
     # Fedora/RedHat/CentOS/OpenSUSE
     if command -v rpm &> /dev/null; then
-        LC_ALL=C rpm --query --all --queryformat='%{name} %{size}\n' |
-        awk "${AWK_UNIT_SIZE_FUNCTION}"'{
-            name = $1;
-            bytes = $2;
-
-            printf("%d %s %s\n", bytes, bytes_to_unit_size(bytes), name);
-        }'
+        LC_ALL=C rpm --query --all --queryformat='%{size} %{name}\n'
     fi
 
     # OpenWRT
     if command -v opkg &> /dev/null; then
         LC_ALL=C opkg info |
-        awk "${AWK_UNIT_SIZE_FUNCTION}"'{
+        awk '{
             if ($1 == "Package:") {
                 name = $2;
             };
@@ -245,7 +216,7 @@ AWK_UNIT_SIZE_FUNCTION='function bytes_to_unit_size(bytes)
             if ($1 == "Size:" && status == "installed") {
                 bytes = $2;
 
-                printf("%d %s %s\n", bytes, bytes_to_unit_size(bytes), name);
+                printf("%d %s\n", bytes, name);
             }
         }'
     fi
@@ -253,31 +224,29 @@ AWK_UNIT_SIZE_FUNCTION='function bytes_to_unit_size(bytes)
     # ArchLinux
     if command -v pacman &> /dev/null; then
         LC_ALL=C pacman -Qi |
-        awk '{
+        awk \
+        'function unit_size_to_bytes(size, unit)
+        {
+            units["B"] = 0;
+            units["KiB"] = 1;
+            units["MiB"] = 2;
+            units["GiB"] = 3;
+            units["TiB"] = 4;
+
+            return size * 1024 ^ units[unit];
+        }
+
+        {
             if ($1 == "Name") {
                 name = $3;
             }
 
             if ($1 == "Installed" && $2 == "Size") {
                 unit = $5;
-                unit_size = $4;
+                size = $4;
+                bytes = unit_size_to_bytes(size, unit);
 
-                switch (unit) {
-                    case "B":
-                        bytes = unit_size;
-                        break;
-                    case "KiB":
-                        bytes = unit_size * 1024;
-                        break;
-                    case "MiB":
-                        bytes = unit_size * 1024 * 1024;
-                        break;
-                    case "GiB":
-                        bytes = unit_size * 1024 * 1024 * 1024;
-                        break;
-                }
-
-                printf("%d %7.2f %s %s\n", bytes, unit_size, unit, name);
+                printf("%d %s\n", bytes, name);
             }
         }'
     fi
@@ -286,12 +255,13 @@ AWK_UNIT_SIZE_FUNCTION='function bytes_to_unit_size(bytes)
 # Order all entries by size
 sort -rn |
 
+# Create Table: %{bytes}d %7.2{unit_size}f %{unit}s %{name}s
 awk \
     -v max_lines="${options[lines]}" \
     -v show_other="${options[other]}" \
     -v show_total="${options[total]}" \
     -v exclude_string="${options[exclude]}" \
-    "${AWK_UNIT_SIZE_FUNCTION}"'BEGIN {
+    'BEGIN {
         other_bytes = 0;
         total_bytes = 0;
         lines = show_other + show_total;
@@ -305,12 +275,34 @@ awk \
         }
     }
 
+    function bytes_to_unit_size(bytes)
     {
-        name = $4;
+        units[0] = "B";
+        units[1] = "KiB";
+        units[2] = "MiB";
+        units[3] = "GiB";
+        units[4] = "TiB";
+
+        for (exponent = 0; exponent < 5; exponent++)
+        {
+            size = bytes / 1024 ^ exponent;
+
+            if (size < 1024)
+            {
+                break;
+            }
+        }
+
+        return sprintf("%7.2f %s", size, units[exponent]);
+    }
+
+    {
+        bytes = $1;
+        name = $2;
 
         if (!(name in exclude_dict)) {
             if (lines < max_lines || max_lines == -1) {
-                print $0;
+                printf("%d %s %s\n", bytes, bytes_to_unit_size(bytes), name);
                 lines++;
             } else {
                 other_bytes += $1;
