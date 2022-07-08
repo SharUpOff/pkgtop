@@ -104,31 +104,31 @@ $ pkgtop [lines [columns]] [--exclude <name>] [--show-other] [--show-total] [--s
 
 # Compatibility
 - ✅ Ubuntu
-  - ✅ 22.04 (TEST OK: 2022-06-25)
-  - ✅ 20.04 (TEST OK: 2022-06-25)
-  - ✅ 18.04 (TEST OK: 2022-06-25)
-  - ✅ 16.04 (TEST OK: 2022-06-25)
-  - ✅ 14.04 (TEST OK: 2022-06-25)
+  - ✅ 22.04 (TEST OK: 2022-07-08)
+  - ✅ 20.04 (TEST OK: 2022-07-08)
+  - ✅ 18.04 (TEST OK: 2022-07-08)
+  - ✅ 16.04 (TEST OK: 2022-07-08)
+  - ✅ 14.04 (TEST OK: 2022-07-08)
 - ✅ Debian
-  - ✅ 11 (TEST OK: 2022-06-25)
-  - ✅ 10 (TEST OK: 2022-06-25)
-  - ✅ 9 (TEST OK: 2022-06-25)
+  - ✅ 11 (TEST OK: 2022-07-08)
+  - ✅ 10 (TEST OK: 2022-07-08)
+  - ✅ 9 (TEST OK: 2022-07-08)
 - ✅ Fedora
-  - ✅ 37 (TEST OK: 2022-06-26)
-  - ✅ 36 (TEST OK: 2022-06-26)
-  - ✅ 35 (TEST OK: 2022-06-26)
-  - ✅ 34 (TEST OK: 2022-06-26)
+  - ✅ 37 (TEST OK: 2022-07-08)
+  - ✅ 36 (TEST OK: 2022-07-08)
+  - ✅ 35 (TEST OK: 2022-07-08)
+  - ✅ 34 (TEST OK: 2022-07-08)
 - ✅ RedHat
-  - ✅ 9 (TEST OK: 2022-06-26)
-  - ✅ 8 (TEST OK: 2022-06-26)
+  - ✅ 9 (TEST OK: 2022-07-08)
+  - ✅ 8 (TEST OK: 2022-07-08)
 - ✅ CentOS
-  - ✅ 7 (TEST OK: 2022-06-26)
+  - ✅ 7 (TEST OK: 2022-07-08)
 - ✅ OpenSUSE
-  - ✅ tumbleweed (TEST OK: 2022-07-06)
+  - ✅ tumbleweed (TEST OK: 2022-07-08)
   - ✅ leap
-    - ✅ 15 (TEST OK: 2022-07-06)
-- ✅ ArchLinux (TEST OK: 2022-06-25)
-- ✅ OpenWRT (TEST OK: 2022-06-26)
+    - ✅ 15 (TEST OK: 2022-07-08)
+- ✅ ArchLinux (TEST OK: 2022-07-08)
+- ✅ OpenWRT (TEST OK: 2022-07-08)
 
 # Contribution
 🛠 You are welcome to add support for other distributions, fix bugs or improve functionality. Please, do not forget to add tests.
