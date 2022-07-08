@@ -28,7 +28,7 @@ for arg in $@; do
 
     case $arg in
         --help|-h)
-            echo -n "Usage: ${0} [lines] [columns] "
+            echo -n "Usage: ${0} [lines [columns]] "
             echo "[--exclude <name>] [--show-other] [--show-total] [--show-all] [--help]"
             echo
             echo "  [lines] --lines <lines> --lines=<lines> -l <lines>"
