@@ -144,9 +144,9 @@ for arg in $@; do
             if [ ! -z "${context[name]}" ]; then
                 # the option can take multiple values if the multiple flag is set in the context
                 if [ ! -z "${context[multiple]}" ]; then
-                    options["${context[name]}"]="${options["${context[name]}"]} ${arg}"
+                    options[${context[name]}]="${options[${context[name]}]} ${arg}"
                 else
-                    options["${context[name]}"]="${arg}"
+                    options[${context[name]}]="${arg}"
                 fi
             fi
         ;;
@@ -188,7 +188,7 @@ if [ -z "${options[lines]}" ] || [ -z "${options[columns]}" ]; then
         prompt_lines="$(echo -e "${PS1}" | wc -l)"
 
         # try to get the number of terminal lines or use default
-        terminal_lines="${LINES:-$(command -v tput &>/dev/null && tput lines || echo "${DEFAULT_LINES}")}"
+        terminal_lines="${LINES:-$(command -v tput &>/dev/null && tput lines || echo ${DEFAULT_LINES})}"
 
         # subtract prompt height from terminal height
         options[lines]="$[${terminal_lines} - ${prompt_lines}]"
@@ -197,7 +197,7 @@ if [ -z "${options[lines]}" ] || [ -z "${options[columns]}" ]; then
     # get number of columns if the custom value is not set
     if [ -z "${options[columns]}" ]; then
         # try to get the number of terminal columns or use default
-        options[columns]="${COLUMNS:-$(command -v tput &>/dev/null && tput cols || echo "${DEFAULT_COLUMNS}")}"
+        options[columns]="${COLUMNS:-$(command -v tput &>/dev/null && tput cols || echo ${DEFAULT_COLUMNS})}"
 
         # limit columns
         options[columns]="$((options[columns] > LIMIT_COLUMNS ? LIMIT_COLUMNS : options[columns]))"
@@ -208,22 +208,20 @@ fi
 (
     # Ubuntu/Debian
     if command -v dpkg-query &> /dev/null; then
-        LC_ALL=C dpkg-query --show --showformat='${Package} ${Installed-Size}\n' |
+        dpkg-query --show --showformat='${Package} ${Installed-Size}\n' |
         awk '{
             name = $1;
             bytes = $2 * 1024;
 
             printf("%d %s\n", bytes, name);
         }'
-    fi
 
     # Fedora/RedHat/CentOS/OpenSUSE
-    if command -v rpm &> /dev/null; then
-        LC_ALL=C rpm --query --all --queryformat='%{size} %{name}\n'
-    fi
+    elif command -v rpm &> /dev/null; then
+        rpm --query --all --queryformat='%{size} %{name}\n'
 
     # OpenWRT
-    if command -v opkg &> /dev/null; then
+    elif command -v opkg &> /dev/null; then
         LC_ALL=C opkg info |
         awk '{
             if ($1 == "Package:") {
@@ -240,10 +238,15 @@ fi
                 printf("%d %s\n", bytes, name);
             }
         }'
-    fi
 
-    # ArchLinux
-    if command -v pacman &> /dev/null; then
+    # ArchLinux (expac)
+    # https://man.archlinux.org/man/community/expac/expac.1.en
+    elif command -v expac &> /dev/null; then
+        expac '%m %n'
+
+    # ArchLinux (pacman)
+    # https://man.archlinux.org/man/pacman.8
+    elif command -v pacman &> /dev/null; then
         LC_ALL=C pacman -Qi |
         awk \
         'function unit_size_to_bytes(size, unit)
@@ -352,12 +355,13 @@ awk \
     -v mark_string="${options[mark]}" \
     -v dotted_line="$(printf "%${options[columns]}s" | tr " " ".")" \
     -v tty="${options[tty]}" \
-    -v cl_red_bold="\033[1;41m" \
-    -v cl_green_bold="\033[1;42m" \
-    -v cl_yellow_bold="\033[1;43m" \
-    -v cl_default_bold="\033[0;1m" \
-    -v cl_default="\033[0m" \
     'BEGIN {
+        cl_red_bold="\033[1;41m";
+        cl_green_bold="\033[1;42m";
+        cl_yellow_bold="\033[1;43m";
+        cl_default_bold="\033[0;1m";
+        cl_default="\033[0m";
+
         # convert string into array for marks
         split(mark_string, mark_list, " ");
 
