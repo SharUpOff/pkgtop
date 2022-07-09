@@ -120,6 +120,25 @@ $ pkgtop [lines [columns]] [--exclude <name>] [--mark <name>] [--show-other] [--
   libaudit-common....................................................   23.00 KiB 
   ```
 
+# Dependencies
+
+## ArchLinux
+You may want to install `expac` to improve script performance:
+```bash
+$ time pkgtop &> /dev/null
+
+real    0m0,576s
+user    0m0,527s
+sys     0m0,067s
+
+$ sudo pacman -S expac
+$ time pkgtop &> /dev/null
+
+real    0m0,391s
+user    0m0,245s
+sys     0m0,120s
+```
+
 # Compatibility
 - ✅ Ubuntu
   - ✅ 22.04 (TEST OK: 2022-07-08)
