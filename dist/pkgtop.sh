@@ -206,72 +206,95 @@ fi
 
 # Create Table: %{bytes}d %{name}s
 (
-    # Ubuntu/Debian (dpkg-query)
-    if command -v dpkg-query &> /dev/null; then
-        dpkg-query --show --showformat='${Package} ${Installed-Size}\n' |
-awk '{
-    name = $1;
-    bytes = $2 * 1024;
-
-    printf("%d %s\n", bytes, name);
-}' 
-
-    # Fedora/RedHat/CentOS/OpenSUSE (rpm)
-    elif command -v rpm &> /dev/null; then
-        rpm --query --all --queryformat='%{size} %{name}\n'
-
-    # OpenWRT (opkg)
-    elif command -v opkg &> /dev/null; then
-        LC_ALL=C opkg info |
-awk '{
-    if ($1 == "Package:") {
-        name = $2;
-    };
-
-    if ($1 == "Status:") {
-        status = $NF;
-    }
-
-    if ($1 == "Size:" && status == "installed") {
-        bytes = $2;
-
-        printf("%d %s\n", bytes, name);
-    }
-}' 
-
     # ArchLinux (expac)
     # https://man.archlinux.org/man/community/expac/expac.1.en
-    elif command -v expac &> /dev/null; then
+    if command -v expac &> /dev/null; then
+        # get installed packages in format: %{bytes}d %{name}\n
         expac '%m %n'
 
+        # prevent other plugins from running
+        exit $?
+    fi
     # ArchLinux (pacman)
     # https://man.archlinux.org/man/pacman.8
-    elif command -v pacman &> /dev/null; then
+    if command -v pacman &> /dev/null; then
+        # get installed packages
         LC_ALL=C pacman -Qi |
-awk 'function unit_size_to_bytes(size, unit)
-{
-    units["B"] = 0;
-    units["KiB"] = 1;
-    units["MiB"] = 2;
-    units["GiB"] = 3;
-    units["TiB"] = 4;
+        # format output: %{bytes}d %{name}\n
+        awk 'function unit_size_to_bytes(size, unit)
+        {
+            units["B"] = 0;
+            units["KiB"] = 1;
+            units["MiB"] = 2;
+            units["GiB"] = 3;
+            units["TiB"] = 4;
 
-    return size * 1024 ^ units[unit];
-}
+            return size * 1024 ^ units[unit];
+        }
 
-{
-    if ($1 == "Name") {
-        name = $3;
-    }
+        {
+            if ($1 == "Name") {
+                name = $3;
+            }
 
-    if ($1 == "Installed" && $2 == "Size") {
-        unit = $5;
-        size = $4;
-        bytes = unit_size_to_bytes(size, unit);
+            if ($1 == "Installed" && $2 == "Size") {
+                unit = $5;
+                size = $4;
+                bytes = unit_size_to_bytes(size, unit);
 
-        printf("%d %s\n", bytes, name);
-    }
-}' 
+                printf("%d %s\n", bytes, name);
+            }
+        }'
+
+        # prevent other plugins from running
+        exit $?
+    fi
+    # Fedora/RedHat/CentOS/OpenSUSE (rpm)
+    if command -v rpm &> /dev/null; then
+        # get installed packages in format: %{bytes}d %{name}\n
+        rpm --query --all --queryformat='%{size} %{name}\n'
+
+        # prevent other plugins from running
+        exit $?
+    fi
+    # OpenWRT (opkg)
+    if command -v opkg &> /dev/null; then
+        # get installed packages
+        LC_ALL=C opkg info |
+        # format output: %{bytes}d %{name}\n
+        awk '{
+            if ($1 == "Package:") {
+                name = $2;
+            };
+
+            if ($1 == "Status:") {
+                status = $NF;
+            }
+
+            if ($1 == "Size:" && status == "installed") {
+                bytes = $2;
+
+                printf("%d %s\n", bytes, name);
+            }
+        }'
+
+        # prevent other plugins from running
+        exit $?
+    fi
+    # Ubuntu/Debian (dpkg-query)
+    if command -v dpkg-query &> /dev/null; then
+        # get installed packages
+        dpkg-query --show --showformat='${Package} ${Installed-Size}\n' |
+        # format output: %{bytes}d %{name}\n
+        awk '{
+            name = $1;
+            bytes = $2 * 1024;
+
+            printf("%d %s\n", bytes, name);
+        }'
+
+        # get installed packages
+        exit $?
     fi
 ) |
 
@@ -284,66 +307,66 @@ awk \
     -v show_other="${options[other]}" \
     -v show_total="${options[total]}" \
     -v exclude_string="${options[exclude]}" \
-'BEGIN {
-    other_bytes = 0;
-    total_bytes = 0;
-    lines = show_other + show_total;
+    'BEGIN {
+        other_bytes = 0;
+        total_bytes = 0;
+        lines = show_other + show_total;
 
-    # convert string into array for excludes
-    split(exclude_string, exclude_list, " ");
+        # convert string into array for excludes
+        split(exclude_string, exclude_list, " ");
 
-    # convert array into dict for excludes
-    for (name in exclude_list) {
-        exclude_dict[exclude_list[name]] = name;
+        # convert array into dict for excludes
+        for (name in exclude_list) {
+            exclude_dict[exclude_list[name]] = name;
+        }
     }
-}
 
-function bytes_to_unit_size(bytes)
-{
-    units[0] = "B";
-    units[1] = "KiB";
-    units[2] = "MiB";
-    units[3] = "GiB";
-    units[4] = "TiB";
-
-    for (exponent = 0; exponent < 5; exponent++)
+    function bytes_to_unit_size(bytes)
     {
-        size = bytes / 1024 ^ exponent;
+        units[0] = "B";
+        units[1] = "KiB";
+        units[2] = "MiB";
+        units[3] = "GiB";
+        units[4] = "TiB";
 
-        if (size < 1024)
+        for (exponent = 0; exponent < 5; exponent++)
         {
-            break;
+            size = bytes / 1024 ^ exponent;
+
+            if (size < 1024)
+            {
+                break;
+            }
+        }
+
+        return sprintf("%7.2f %s", size, units[exponent]);
+    }
+
+    {
+        bytes = $1;
+        name = $2;
+
+        if (!(name in exclude_dict)) {
+            if (lines < max_lines || max_lines == -1) {
+                printf("%d %s %s\n", bytes, bytes_to_unit_size(bytes), name);
+                lines++;
+            } else {
+                other_bytes += $1;
+            }
+
+            total_bytes += $1;
         }
     }
 
-    return sprintf("%7.2f %s", size, units[exponent]);
-}
-
-{
-    bytes = $1;
-    name = $2;
-
-    if (!(name in exclude_dict)) {
-        if (lines < max_lines || max_lines == -1) {
-            printf("%d %s %s\n", bytes, bytes_to_unit_size(bytes), name);
-            lines++;
-        } else {
-            other_bytes += $1;
+    END {
+        if (show_other && other_bytes > 0) {
+            printf("%d %s %s\n", other_bytes, bytes_to_unit_size(other_bytes), "[other]");
         }
 
-        total_bytes += $1;
-    }
-}
-
-END {
-    if (show_other && other_bytes > 0) {
-        printf("%d %s %s\n", other_bytes, bytes_to_unit_size(other_bytes), "[other]");
-    }
-
-    if (show_total) {
-        printf("%d %s %s\n", 0, bytes_to_unit_size(total_bytes), "[total]");
-    }
-}' |
+        if (show_total) {
+            printf("%d %s %s\n", 0, bytes_to_unit_size(total_bytes), "[total]");
+        }
+    }' |
 
 # Order filtered entries by size
 sort -rn |
@@ -354,60 +377,60 @@ awk \
     -v mark_string="${options[mark]}" \
     -v dotted_line="$(printf "%${options[columns]}s" | tr " " ".")" \
     -v tty="${options[tty]}" \
-'BEGIN {
-    cl_red_bold="\033[1;41m";
-    cl_green_bold="\033[1;42m";
-    cl_yellow_bold="\033[1;43m";
-    cl_default_bold="\033[0;1m";
-    cl_default="\033[0m";
+    'BEGIN {
+        cl_red_bold="\033[1;41m";
+        cl_green_bold="\033[1;42m";
+        cl_yellow_bold="\033[1;43m";
+        cl_default_bold="\033[0;1m";
+        cl_default="\033[0m";
 
-    # convert string into array for marks
-    split(mark_string, mark_list, " ");
+        # convert string into array for marks
+        split(mark_string, mark_list, " ");
 
-    # convert array into dict for marks
-    for (name in mark_list) {
-        mark_dict[mark_list[name]] = name;
-    }
-}
-
-{
-    bytes = $1;
-    size = $2;
-    unit = $3;
-    name = $4;
-
-    if (!max_bytes) {
-        max_bytes = bytes;
+        # convert array into dict for marks
+        for (name in mark_list) {
+            mark_dict[mark_list[name]] = name;
+        }
     }
 
-    columns = int(bytes / max_bytes * max_columns);
-    margin_right = 7 + 3 + 3;  // 7 size + 3 unit + 3 space characters
+    {
+        bytes = $1;
+        size = $2;
+        unit = $3;
+        name = $4;
 
-    if (name in mark_dict) {
-        mark = "<";
-    } else {
-        mark = " ";
-    }
-
-    line = sprintf(sprintf("%%.%ds %%7.2f %%3s%%s", max_columns - margin_right), name dotted_line, size, unit, mark);
-
-    if (tty) {
-        color = cl_green_bold;
-        start_line = substr(line, 1, columns);
-        end_line = substr(line, columns + 1);
-
-        if (bytes / max_bytes > 0.5) {
-            color = cl_yellow_bold;
+        if (!max_bytes) {
+            max_bytes = bytes;
         }
 
-        if (bytes / max_bytes > 0.75) {
-            color = cl_red_bold;
+        columns = int(bytes / max_bytes * max_columns);
+        margin_right = 7 + 3 + 3;  // 7 size + 3 unit + 3 space characters
+
+        if (name in mark_dict) {
+            mark = "<";
+        } else {
+            mark = " ";
         }
 
-        printf("%s%s%s%s%s\n", color, start_line, cl_default_bold, end_line, cl_default);
-    } else {
-        print(line);
-    }
-}' 
+        line = sprintf(sprintf("%%.%ds %%7.2f %%3s%%s", max_columns - margin_right), name dotted_line, size, unit, mark);
+
+        if (tty) {
+            color = cl_green_bold;
+            start_line = substr(line, 1, columns);
+            end_line = substr(line, columns + 1);
+
+            if (bytes / max_bytes > 0.5) {
+                color = cl_yellow_bold;
+            }
+
+            if (bytes / max_bytes > 0.75) {
+                color = cl_red_bold;
+            }
+
+            printf("%s%s%s%s%s\n", color, start_line, cl_default_bold, end_line, cl_default);
+        } else {
+            print(line);
+        }
+    }'
 
 exit $?

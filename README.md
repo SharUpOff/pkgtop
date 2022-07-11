@@ -170,6 +170,25 @@ sys     0m0,120s
 # Contribution
 🛠 You are welcome to add support for other distributions, fix bugs or improve functionality. Please, do not forget to add tests.
 
+## Add distribution support
+Create a plugin file `src/includes/distributions/yourdistro/01_package-manager.sh`
+```bash
+# YourDistro (package-manager)
+if command -v package-manager &> /dev/null; then
+    # get installed packages in format: %{bytes}d %{name}\n
+    package-manager --installed --format='%{bytes} %{name}\n'
+
+    # prevent other plugins from running
+    exit $?  
+fi
+```
+
+Yor plugin should write installed packages using format `%{bytes}d %{name}s\n` to the `STDOUT`:
+```bash
+2131 foo
+34534 bar
+```
+
 # Testing
 There are some regression tests provided for compatible distributions.
 
