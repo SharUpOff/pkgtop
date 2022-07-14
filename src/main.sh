@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 # Description: Show largest installed packages
 # Author: SharUpOff<sharupoff@efstudios.org>
 # License: GPLv3
