@@ -58,7 +58,7 @@ $ pkgtop [lines [columns]] [--skip <count>] [--exclude <name>] [--mark <name>] [
   ```
 - Show other:
   ```bash
-  $ pkgtop 5 --show-other
+  $ pkgtop 5 --other
   [other]............................................................   61.35 MiB 
   libc6..............................................................   13.27 MiB 
   perl-base..........................................................    7.59 MiB 
@@ -67,7 +67,7 @@ $ pkgtop [lines [columns]] [--skip <count>] [--exclude <name>] [--mark <name>] [
   ```
 - Show total:
   ```bash
-  $ pkgtop 5 --show-other --show-total
+  $ pkgtop 5 --other --total
   [other]............................................................   67.93 MiB 
   libc6..............................................................   13.27 MiB 
   perl-base..........................................................    7.59 MiB 
@@ -76,7 +76,7 @@ $ pkgtop [lines [columns]] [--skip <count>] [--exclude <name>] [--mark <name>] [
   ```
 - Exclude package:
   ```bash
-  $ pkgtop 5 --show-other --show-total --exclude libc6
+  $ pkgtop 5 --other --total --exclude libc6
   [other]............................................................   61.35 MiB 
   perl-base..........................................................    7.59 MiB 
   coreutils..........................................................    6.95 MiB 
@@ -85,7 +85,7 @@ $ pkgtop [lines [columns]] [--skip <count>] [--exclude <name>] [--mark <name>] [
   ```
 - Exclude multiple packages:
   ```bash
-  $ pkgtop 5 --show-other --show-total --exclude libc6 --exclude coreutils
+  $ pkgtop 5 --other --total --exclude libc6 --exclude coreutils
   [other]............................................................   55.67 MiB 
   perl-base..........................................................    7.59 MiB 
   dpkg...............................................................    6.58 MiB 
@@ -94,7 +94,7 @@ $ pkgtop [lines [columns]] [--skip <count>] [--exclude <name>] [--mark <name>] [
   ```
 - Mark package:
   ```bash
-  $ pkgtop 5 --show-other --show-total --mark coreutils
+  $ pkgtop 5 --other --total --mark coreutils
   [other]............................................................   67.93 MiB 
   libc6..............................................................   13.27 MiB 
   perl-base..........................................................    7.59 MiB 
@@ -103,7 +103,7 @@ $ pkgtop [lines [columns]] [--skip <count>] [--exclude <name>] [--mark <name>] [
   ```
 - Mark multiple packages:
   ```bash
-  $ pkgtop  5 --show-other --show-total --mark coreutils --mark [other]
+  $ pkgtop  5 --other --total --mark coreutils --mark [other]
   [other]............................................................   67.93 MiB<
   libc6..............................................................   13.27 MiB 
   perl-base..........................................................    7.59 MiB 
@@ -112,7 +112,7 @@ $ pkgtop [lines [columns]] [--skip <count>] [--exclude <name>] [--mark <name>] [
   ```
 - Do not limit the output:
   ```bash
-  $ pkgtop --show-all
+  $ pkgtop --all
   libc6..............................................................   13.27 MiB 
   perl-base..........................................................    7.59 MiB
   ...
