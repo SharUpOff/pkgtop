@@ -51,7 +51,7 @@ for arg in $@; do
     case $arg in
         --help|-h)
             echo -n "Usage: ${0} [lines [columns]] "
-            echo "[--exclude <name>] [--mark <name>] [--show-other] [--show-total] [--show-all] [--safe] [--help]"
+            echo "[--exclude <name>] [--mark <name>] [--other] [--total] [--all] [--safe] [--help]"
             echo
             echo "  [lines] --lines <lines> --lines=<lines> -l <lines>"
             echo "    Show specified number of lines (results)."
@@ -60,17 +60,17 @@ for arg in $@; do
             echo "  [columns] --columns <columns> --columns=<columns> -c <columns>"
             echo "    Show specified number of columns (width)."
             echo
-            echo "  --show-other -o"
+            echo "  --other --show-other -o"
             echo "    Show the total size of packages not included in the list of results."
             echo "    The result named [other] is sorted along with other results."
             echo "    <!> Excluded packages are ignored in the count."
             echo
-            echo "  --show-total -t"
+            echo "  --total --show-total -t"
             echo "    Show the total size of all packages."
             echo "    The result named [total] is displayed at the end of the list."
             echo "    <!> Excluded packages are ignored in the count."
             echo
-            echo "  --show-all -a"
+            echo "  --all --show-all -a"
             echo "    Do not limit the output. Display all packages instead."
             echo "    <!> Excluded packages stay hidden even if all results should be displayed."
             echo
@@ -91,13 +91,13 @@ for arg in $@; do
             echo
             exit 0
         ;;
-        --show-other|-o)
+        --other|--show-other|-o)
             options[other]=1
         ;;
-        --show-total|-t)
+        --total|--show-total|-t)
             options[total]=1
         ;;
-        --show-all|-a)
+        --all|--show-all|-a)
             options[lines]=-1;
         ;;
         --safe|-s)
