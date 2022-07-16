@@ -5,8 +5,11 @@ BEGIN {
     cl_default_bold = "\033[0;1m";
     cl_default = "\033[0m";
 
-    # create a string filled with %{max_columns}d spaces
-    dotted_line = sprintf(sprintf("%%%ds", max_columns), "");
+    # 7 size + 3 unit + 3 space characters
+    dotted_line_length = max_columns - (7 + 3 + 3);
+
+    # create a string filled with %{dotted_line_length}d spaces
+    dotted_line = sprintf(sprintf("%%%ds", dotted_line_length), "");
 
     # replace spaces with dots
     gsub(" ", ".", dotted_line);
@@ -30,21 +33,20 @@ BEGIN {
         max_bytes = bytes;
     }
 
-    columns = int(bytes / max_bytes * max_columns);
-    margin_right = 7 + 3 + 3;  # 7 size + 3 unit + 3 space characters
-
     if (name in mark_dict) {
         mark = "<";
     } else {
         mark = " ";
     }
 
-    line = sprintf(sprintf("%%.%ds %%7.2f %%.3s%%s", max_columns - margin_right), name dotted_line, size, unit, mark);
+    name_with_dots = sprintf(sprintf("%%.%ds", dotted_line_length), name dotted_line);
+    output = sprintf("%s %7.2f %.3s%s", name_with_dots, size, unit, mark);
 
     if (tty) {
+        colored_columns = int(bytes / max_bytes * max_columns);
+        colored_output = substr(output, 1, colored_columns);
+        default_output = substr(output, colored_columns + 1);
         color = cl_green_bold;
-        start_line = substr(line, 1, columns);
-        end_line = substr(line, columns + 1);
 
         if (bytes / max_bytes > 0.5) {
             color = cl_yellow_bold;
@@ -54,8 +56,8 @@ BEGIN {
             color = cl_red_bold;
         }
 
-        printf("%s%s%s%s%s\n", color, start_line, cl_default_bold, end_line, cl_default);
+        print(color colored_output cl_default_bold default_output cl_default);
     } else {
-        print(line);
+        print(output);
     }
 }
