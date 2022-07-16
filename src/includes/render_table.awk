@@ -25,7 +25,7 @@ BEGIN {
     }
 
     columns = int(bytes / max_bytes * max_columns);
-    margin_right = 7 + 3 + 3;  // 7 size + 3 unit + 3 space characters
+    margin_right = 7 + 3 + 3;  # 7 size + 3 unit + 3 space characters
 
     if (name in mark_dict) {
         mark = "<";
