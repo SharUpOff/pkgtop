@@ -141,31 +141,31 @@ sys     0m0,120s
 
 # Compatibility
 - ✅ Ubuntu
-  - ✅ 22.04 (TEST OK: 2022-07-13)
-  - ✅ 20.04 (TEST OK: 2022-07-13)
-  - ✅ 18.04 (TEST OK: 2022-07-13)
-  - ✅ 16.04 (TEST OK: 2022-07-13)
-  - ✅ 14.04 (TEST OK: 2022-07-13)
+  - ✅ 22.04 (TEST OK: 2022-07-16)
+  - ✅ 20.04 (TEST OK: 2022-07-16)
+  - ✅ 18.04 (TEST OK: 2022-07-16)
+  - ✅ 16.04 (TEST OK: 2022-07-16)
+  - ✅ 14.04 (TEST OK: 2022-07-16)
 - ✅ Debian
-  - ✅ 11 (TEST OK: 2022-07-13)
-  - ✅ 10 (TEST OK: 2022-07-13)
-  - ✅ 9 (TEST OK: 2022-07-13)
+  - ✅ 11 (TEST OK: 2022-07-16)
+  - ✅ 10 (TEST OK: 2022-07-16)
+  - ✅ 9 (TEST OK: 2022-07-16)
 - ✅ Fedora
-  - ✅ 37 (TEST OK: 2022-07-13)
-  - ✅ 36 (TEST OK: 2022-07-13)
-  - ✅ 35 (TEST OK: 2022-07-13)
-  - ✅ 34 (TEST OK: 2022-07-13)
+  - ✅ 37 (TEST OK: 2022-07-16)
+  - ✅ 36 (TEST OK: 2022-07-16)
+  - ✅ 35 (TEST OK: 2022-07-16)
+  - ✅ 34 (TEST OK: 2022-07-16)
 - ✅ RedHat
-  - ✅ 9 (TEST OK: 2022-07-13)
-  - ✅ 8 (TEST OK: 2022-07-13)
+  - ✅ 9 (TEST OK: 2022-07-16)
+  - ✅ 8 (TEST OK: 2022-07-16)
 - ✅ CentOS
-  - ✅ 7 (TEST OK: 2022-07-13)
+  - ✅ 7 (TEST OK: 2022-07-16)
 - ✅ OpenSUSE
-  - ✅ tumbleweed (TEST OK: 2022-07-13)
+  - ✅ tumbleweed (TEST OK: 2022-07-16)
   - ✅ leap
-    - ✅ 15 (TEST OK: 2022-07-13)
-- ✅ ArchLinux (TEST OK: 2022-07-13)
-- ✅ OpenWRT (TEST OK: 2022-07-13)
+    - ✅ 15 (TEST OK: 2022-07-16)
+- ✅ ArchLinux (TEST OK: 2022-07-16)
+- ✅ OpenWRT (TEST OK: 2022-07-16)
 
 # Contribution
 🛠 You are welcome to add support for other distributions, fix bugs or improve functionality. Please, do not forget to add tests.
