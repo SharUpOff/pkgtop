@@ -7,7 +7,7 @@ source ./includes/parse_arguments.sh
 
 source ./includes/auto_size.sh
 
-# Create Table: %{bytes}d %{name}s
+# Output: %{bytes}d %{name}s
 (
     source ./includes/distributions/*/*.sh
 
@@ -20,9 +20,8 @@ source ./includes/auto_size.sh
 # Order all entries by size
 sort -rn |
 
-# Create Table: %{bytes}d %7.2{unit_size}f %{unit}s %{name}s
-awk \
-    -v max_lines="${options[lines]}" \
+# Output: %{bytes}d %7.2{size}f %{unit}s %{name}s
+awk -v max_lines="${options[lines]}" \
     -v show_other="${options[other]}" \
     -v show_total="${options[total]}" \
     -v exclude_string="${options[exclude]}" \
@@ -32,8 +31,7 @@ awk \
 sort -rn |
 
 # Render Table
-awk \
-    -v max_columns="${options[columns]}" \
+awk -v max_columns="${options[columns]}" \
     -v mark_string="${options[mark]}" \
     -v dotted_line="$(printf "%${options[columns]}s" | tr " " ".")" \
     -v tty="${options[tty]}" \
