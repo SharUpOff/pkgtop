@@ -1,9 +1,15 @@
 BEGIN {
-    cl_red_bold="\033[1;41m";
-    cl_green_bold="\033[1;42m";
-    cl_yellow_bold="\033[1;43m";
-    cl_default_bold="\033[0;1m";
-    cl_default="\033[0m";
+    cl_red_bold = "\033[1;41m";
+    cl_green_bold = "\033[1;42m";
+    cl_yellow_bold = "\033[1;43m";
+    cl_default_bold = "\033[0;1m";
+    cl_default = "\033[0m";
+
+    # create a string filled with %{max_columns}d spaces
+    dotted_line = sprintf(sprintf("%%%ds", max_columns), "");
+
+    # replace spaces with dots
+    gsub(" ", ".", dotted_line);
 
     # convert string into array for marks
     split(mark_string, mark_list, " ");

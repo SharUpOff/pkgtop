@@ -33,7 +33,6 @@ sort -rn |
 # Render Table
 awk -v max_columns="${options[columns]}" \
     -v mark_string="${options[mark]}" \
-    -v dotted_line="$(printf "%${options[columns]}s" | tr " " ".")" \
     -v tty="${options[tty]}" \
     -f ./includes/render_table.awk
 
