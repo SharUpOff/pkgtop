@@ -51,7 +51,7 @@ for arg in $@; do
     case $arg in
         --help|-h)
             echo -n "Usage: ${0} [lines [columns]] "
-            echo "[--exclude <name>] [--mark <name>] [--other] [--total] [--all] [--safe] [--version] [--help]"
+            echo "[--exclude <name>] [--mark <name>] [--other] [--total] [--all] [--raw] [--version] [--help]"
             echo
             echo "  [lines] --lines <lines> --lines=<lines> -l <lines>"
             echo "    Show specified number of lines (results)."
@@ -74,8 +74,8 @@ for arg in $@; do
             echo "    Do not limit the output. Display all packages instead."
             echo "    <!> Excluded packages stay hidden even if all results should be displayed."
             echo
-            echo "  --safe -s"
-            echo "    Preserve colour output."
+            echo "  --raw -r"
+            echo "    Preserve colour output even if tty is not detected."
             echo
             echo "  --exclude <name> --exclude=<name> -e <name>"
             echo "    Exclude specified package(s)."
@@ -107,7 +107,7 @@ for arg in $@; do
         --all|--show-all|-a)
             options[lines]=-1;
         ;;
-        --safe|-s)
+        --raw|-r)
             options[tty]=1;
         ;;
         --lines|-l)
