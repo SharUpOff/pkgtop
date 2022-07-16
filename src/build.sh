@@ -27,6 +27,9 @@ awk '{
     }
 }' < main.sh |
 
+# include version
+sed 's/$(cat ..\/VERSION)/'"$(cat ../VERSION)"'/g' |
+
 # merge awk includes
 awk '{
     if ($1 == "-f") {

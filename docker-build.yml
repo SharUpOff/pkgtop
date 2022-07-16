@@ -3,7 +3,6 @@ version: '3'
 services:
   build-ubuntu-22.04:
     image: ubuntu:22.04
-    command: ["bash", "-c", "bash /tmp/src/build.sh"]
+    command: ["bash", "-c", "bash /tmp/build/src/build.sh"]
     volumes:
-      - ./dist:/tmp/dist
-      - ./src:/tmp/src
+      - .:/tmp/pkgtop

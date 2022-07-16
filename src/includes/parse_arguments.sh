@@ -51,7 +51,7 @@ for arg in $@; do
     case $arg in
         --help|-h)
             echo -n "Usage: ${0} [lines [columns]] "
-            echo "[--exclude <name>] [--mark <name>] [--other] [--total] [--all] [--safe] [--help]"
+            echo "[--exclude <name>] [--mark <name>] [--other] [--total] [--all] [--safe] [--version] [--help]"
             echo
             echo "  [lines] --lines <lines> --lines=<lines> -l <lines>"
             echo "    Show specified number of lines (results)."
@@ -86,9 +86,16 @@ for arg in $@; do
             echo "  --mark <name> --mark=<name> -m <name>"
             echo "    Mark specified package(s)."
             echo
-            echo "  --help -h"
-            echo "    Show this info."
+            echo "  --version -v"
+            echo "    Show version info and exit."
             echo
+            echo "  --help -h"
+            echo "    Show this info and exit."
+            echo
+            exit 0
+        ;;
+        --version|-v)
+            echo "$(cat ../VERSION)"
             exit 0
         ;;
         --other|--show-other|-o)
