@@ -5,4 +5,4 @@ services:
     image: ubuntu:22.04
     command: ["bash", "-c", "bash /tmp/build/src/build.sh"]
     volumes:
-      - .:/tmp/pkgtop
+      - .:/tmp/build
