@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 # Description: Show largest installed packages
 # Author: SharUpOff<sharupoff@efstudios.org>
 # License: GPLv3
@@ -15,6 +15,7 @@ declare -A options
 options[exclude]=""
 options[other]=0
 options[total]=0
+options[skip]=0
 
 # detect tty
 test ! -t 1
@@ -56,7 +57,8 @@ for arg in $@; do
     case $arg in
         --help|-h)
             echo -n "Usage: ${0} [lines [columns]] "
-            echo "[--exclude <name>] [--mark <name>] [--show-other] [--show-total] [--show-all] [--safe] [--help]"
+            echo "[--skip <count>] [--exclude <name>] [--mark <name>] "
+            echo "[--other] [--total] [--all] [--raw] [--version] [--help]"
             echo
             echo "  [lines] --lines <lines> --lines=<lines> -l <lines>"
             echo "    Show specified number of lines (results)."
@@ -65,22 +67,28 @@ for arg in $@; do
             echo "  [columns] --columns <columns> --columns=<columns> -c <columns>"
             echo "    Show specified number of columns (width)."
             echo
-            echo "  --show-other -o"
+            echo "  --other --show-other -o"
             echo "    Show the total size of packages not included in the list of results."
             echo "    The result named [other] is sorted along with other results."
             echo "    <!> Excluded packages are ignored in the count."
             echo
-            echo "  --show-total -t"
+            echo "  --total --show-total -t"
             echo "    Show the total size of all packages."
             echo "    The result named [total] is displayed at the end of the list."
             echo "    <!> Excluded packages are ignored in the count."
             echo
-            echo "  --show-all -a"
+            echo "  --all --show-all -a"
             echo "    Do not limit the output. Display all packages instead."
             echo "    <!> Excluded packages stay hidden even if all results should be displayed."
             echo
-            echo "  --safe -s"
-            echo "    Preserve colour output."
+            echo "  --raw -r"
+            echo "    Preserve colour output even if tty is not detected."
+            echo
+            echo "  --skip <count> --skip=<count> -s <count>"
+            echo "    Skip specified number of first package(s)."
+            echo "    The argument can be specified multiple times."
+            echo "    <!> Skipped packages do not count towards [total] or [other] results."
+            echo "    <!> Skipped packages stay hidden even if all results should be displayed."
             echo
             echo "  --exclude <name> --exclude=<name> -e <name>"
             echo "    Exclude specified package(s)."
@@ -91,21 +99,28 @@ for arg in $@; do
             echo "  --mark <name> --mark=<name> -m <name>"
             echo "    Mark specified package(s)."
             echo
+            echo "  --version -v"
+            echo "    Show version info and exit."
+            echo
             echo "  --help -h"
-            echo "    Show this info."
+            echo "    Show this info and exit."
             echo
             exit 0
         ;;
-        --show-other|-o)
+        --version|-v)
+            echo "1.0.0"
+            exit 0
+        ;;
+        --other|--show-other|-o)
             options[other]=1
         ;;
-        --show-total|-t)
+        --total|--show-total|-t)
             options[total]=1
         ;;
-        --show-all|-a)
+        --all|--show-all|-a)
             options[lines]=-1;
         ;;
-        --safe|-s)
+        --raw|-r)
             options[tty]=1;
         ;;
         --lines|-l)
@@ -121,6 +136,13 @@ for arg in $@; do
         ;;
         --columns=*)
             options[columns]="${arg/--columns=}"
+        ;;
+        --skip|-s)
+            declare -A context
+            context[name]='skip'
+        ;;
+        --skip=*)
+            options[skip]="${arg/--skip=}"
         ;;
         --exclude|-e)
             declare -A context
@@ -204,7 +226,7 @@ if [ -z "${options[lines]}" ] || [ -z "${options[columns]}" ]; then
     fi
 fi
 
-# Create Table: %{bytes}d %{name}s
+# Output: %{bytes}d %{name}s
 (
     # ArchLinux (expac)
     # https://man.archlinux.org/man/community/expac/expac.1.en
@@ -296,14 +318,19 @@ fi
         # get installed packages
         exit $?
     fi
+
+    echo "It seems your distribution is not supported." >&2
+    echo "However, you are welcome to add the support:" >&2
+    echo "https://github.com/SharUpOff/pkgtop#contribution" >&2
+    exit 1
 ) |
 
 # Order all entries by size
 sort -rn |
 
-# Create Table: %{bytes}d %7.2{unit_size}f %{unit}s %{name}s
-awk \
-    -v max_lines="${options[lines]}" \
+# Output: %{bytes}d %7.2{size}f %{unit}s %{name}s
+awk -v max_lines="${options[lines]}" \
+    -v skip_lines="${options[skip]}" \
     -v show_other="${options[other]}" \
     -v show_total="${options[total]}" \
     -v exclude_string="${options[exclude]}" \
@@ -343,18 +370,23 @@ awk \
     }
 
     {
-        bytes = $1;
-        name = $2;
+        if (skipped_lines < skip_lines) {
+            skipped_lines++;
+        } else {
+            name = $2;
 
-        if (!(name in exclude_dict)) {
-            if (lines < max_lines || max_lines == -1) {
-                printf("%d %s %s\n", bytes, bytes_to_unit_size(bytes), name);
-                lines++;
-            } else {
-                other_bytes += $1;
+            if (!(name in exclude_dict)) {
+                bytes = $1;
+
+                if (lines < max_lines || max_lines == -1) {
+                    printf("%d %s %s\n", bytes, bytes_to_unit_size(bytes), name);
+                    lines++;
+                } else {
+                    other_bytes += bytes;
+                }
+
+                total_bytes += bytes;
             }
-
-            total_bytes += $1;
         }
     }
 
@@ -372,17 +404,24 @@ awk \
 sort -rn |
 
 # Render Table
-awk \
-    -v max_columns="${options[columns]}" \
+awk -v max_columns="${options[columns]}" \
     -v mark_string="${options[mark]}" \
-    -v dotted_line="$(printf "%${options[columns]}s" | tr " " ".")" \
     -v tty="${options[tty]}" \
     'BEGIN {
-        cl_red_bold="\033[1;41m";
-        cl_green_bold="\033[1;42m";
-        cl_yellow_bold="\033[1;43m";
-        cl_default_bold="\033[0;1m";
-        cl_default="\033[0m";
+        cl_red_bold = "\033[1;41m";
+        cl_green_bold = "\033[1;42m";
+        cl_yellow_bold = "\033[1;43m";
+        cl_default_bold = "\033[0;1m";
+        cl_default = "\033[0m";
+
+        # 7 size + 3 unit + 3 space characters
+        dotted_line_length = max_columns - (7 + 3 + 3);
+
+        # create a string filled with %{dotted_line_length}d spaces
+        dotted_line = sprintf(sprintf("%%%ds", dotted_line_length), "");
+
+        # replace spaces with dots
+        gsub(" ", ".", dotted_line);
 
         # convert string into array for marks
         split(mark_string, mark_list, " ");
@@ -403,21 +442,20 @@ awk \
             max_bytes = bytes;
         }
 
-        columns = int(bytes / max_bytes * max_columns);
-        margin_right = 7 + 3 + 3;  // 7 size + 3 unit + 3 space characters
-
         if (name in mark_dict) {
             mark = "<";
         } else {
             mark = " ";
         }
 
-        line = sprintf(sprintf("%%.%ds %%7.2f %%3s%%s", max_columns - margin_right), name dotted_line, size, unit, mark);
+        name_with_dots = sprintf(sprintf("%%.%ds", dotted_line_length), name dotted_line);
+        output = sprintf("%s %7.2f %-3s%s", name_with_dots, size, unit, mark);
 
-        if (tty) {
+        if (tty && max_bytes) {
+            colored_columns = int(bytes / max_bytes * max_columns);
+            colored_output = substr(output, 1, colored_columns);
+            default_output = substr(output, colored_columns + 1);
             color = cl_green_bold;
-            start_line = substr(line, 1, columns);
-            end_line = substr(line, columns + 1);
 
             if (bytes / max_bytes > 0.5) {
                 color = cl_yellow_bold;
@@ -427,9 +465,9 @@ awk \
                 color = cl_red_bold;
             }
 
-            printf("%s%s%s%s%s\n", color, start_line, cl_default_bold, end_line, cl_default);
+            print(color colored_output cl_default_bold default_output cl_default);
         } else {
-            print(line);
+            print(output);
         }
     }'
 
