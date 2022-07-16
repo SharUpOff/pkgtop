@@ -10,6 +10,11 @@ source ./includes/auto_size.sh
 # Create Table: %{bytes}d %{name}s
 (
     source ./includes/distributions/*/*.sh
+
+    echo "It seems your distribution is not supported." >&2
+    echo "However, you are welcome to add the support:" >&2
+    echo "https://github.com/SharUpOff/pkgtop#contribution" >&2
+    exit 1
 ) |
 
 # Order all entries by size
