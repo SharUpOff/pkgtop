@@ -42,7 +42,7 @@ BEGIN {
     name_with_dots = sprintf(sprintf("%%.%ds", dotted_line_length), name dotted_line);
     output = sprintf("%s %7.2f %-3s%s", name_with_dots, size, unit, mark);
 
-    if (tty) {
+    if (tty && max_bytes) {
         colored_columns = int(bytes / max_bytes * max_columns);
         colored_output = substr(output, 1, colored_columns);
         default_output = substr(output, colored_columns + 1);
