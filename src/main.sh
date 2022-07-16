@@ -22,6 +22,7 @@ sort -rn |
 
 # Output: %{bytes}d %7.2{size}f %{unit}s %{name}s
 awk -v max_lines="${options[lines]}" \
+    -v skip_lines="${options[skip]}" \
     -v show_other="${options[other]}" \
     -v show_total="${options[total]}" \
     -v exclude_string="${options[exclude]}" \

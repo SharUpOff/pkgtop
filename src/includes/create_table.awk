@@ -34,18 +34,23 @@ function bytes_to_unit_size(bytes)
 }
 
 {
-    bytes = $1;
-    name = $2;
+    if (skipped_lines < skip_lines) {
+        skipped_lines++;
+    } else {
+        name = $2;
 
-    if (!(name in exclude_dict)) {
-        if (lines < max_lines || max_lines == -1) {
-            printf("%d %s %s\n", bytes, bytes_to_unit_size(bytes), name);
-            lines++;
-        } else {
-            other_bytes += $1;
+        if (!(name in exclude_dict)) {
+            bytes = $1;
+
+            if (lines < max_lines || max_lines == -1) {
+                printf("%d %s %s\n", bytes, bytes_to_unit_size(bytes), name);
+                lines++;
+            } else {
+                other_bytes += bytes;
+            }
+
+            total_bytes += bytes;
         }
-
-        total_bytes += $1;
     }
 }
 

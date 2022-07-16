@@ -10,6 +10,7 @@ declare -A options
 options[exclude]=""
 options[other]=0
 options[total]=0
+options[skip]=0
 
 # detect tty
 test ! -t 1
@@ -51,7 +52,8 @@ for arg in $@; do
     case $arg in
         --help|-h)
             echo -n "Usage: ${0} [lines [columns]] "
-            echo "[--exclude <name>] [--mark <name>] [--other] [--total] [--all] [--raw] [--version] [--help]"
+            echo "[--skip <count>] [--exclude <name>] [--mark <name>] "
+            echo "[--other] [--total] [--all] [--raw] [--version] [--help]"
             echo
             echo "  [lines] --lines <lines> --lines=<lines> -l <lines>"
             echo "    Show specified number of lines (results)."
@@ -76,6 +78,12 @@ for arg in $@; do
             echo
             echo "  --raw -r"
             echo "    Preserve colour output even if tty is not detected."
+            echo
+            echo "  --skip <count> --skip=<count> -s <count>"
+            echo "    Skip specified number of first package(s)."
+            echo "    The argument can be specified multiple times."
+            echo "    <!> Skipped packages do not count towards [total] or [other] results."
+            echo "    <!> Skipped packages stay hidden even if all results should be displayed."
             echo
             echo "  --exclude <name> --exclude=<name> -e <name>"
             echo "    Exclude specified package(s)."
@@ -123,6 +131,13 @@ for arg in $@; do
         ;;
         --columns=*)
             options[columns]="${arg/--columns=}"
+        ;;
+        --skip|-s)
+            declare -A context
+            context[name]='skip'
+        ;;
+        --skip=*)
+            options[skip]="${arg/--skip=}"
         ;;
         --exclude|-e)
             declare -A context
