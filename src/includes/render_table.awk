@@ -39,7 +39,7 @@ BEGIN {
         mark = " ";
     }
 
-    line = sprintf(sprintf("%%.%ds %%7.2f %%3s%%s", max_columns - margin_right), name dotted_line, size, unit, mark);
+    line = sprintf(sprintf("%%.%ds %%7.2f %%.3s%%s", max_columns - margin_right), name dotted_line, size, unit, mark);
 
     if (tty) {
         color = cl_green_bold;
