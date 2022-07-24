@@ -184,8 +184,8 @@ Create a plugin file `src/includes/distributions/yourdistro/01_package-manager.s
 ```bash
 # YourDistro (package-manager)
 if command -v package-manager &> /dev/null; then
-    # get installed packages in format: %{bytes}d %{name}\n
-    package-manager --installed --format='%{bytes} %{name}\n'
+    # write installed packages to the STDOUT using format: %{bytes}d %{name}s\n
+    package-manager --installed --format='%{bytes}d %{name}s\n'
 
     # prevent other plugins from running
     exit $?  
