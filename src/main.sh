@@ -9,6 +9,8 @@ source ./includes/auto_size.sh
 
 # Output: %{bytes}d %{name}s
 (
+    source ./includes/multiplatform/*/*.sh
+
     source ./includes/distributions/*/*.sh
 
     echo "It seems your distribution is not supported." >&2
