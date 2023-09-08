@@ -21,20 +21,20 @@ source ./includes/auto_size.sh
 sort -rn |
 
 # Output: %{bytes}d %7.2{size}f %{unit}s %{name}s
-awk -v max_lines="${options[lines]}" \
-    -v skip_lines="${options[skip]}" \
-    -v show_other="${options[other]}" \
-    -v show_total="${options[total]}" \
-    -v exclude_string="${options[exclude]}" \
+awk -v max_lines="${settings[lines]}" \
+    -v skip_lines="${settings[skip]}" \
+    -v show_other="${settings[other]}" \
+    -v show_total="${settings[total]}" \
+    -v exclude_string="${settings[exclude]}" \
     -f ./includes/create_table.awk |
 
 # Order filtered entries by size
 sort -rn |
 
 # Render Table
-awk -v max_columns="${options[columns]}" \
-    -v mark_string="${options[mark]}" \
-    -v tty="${options[tty]}" \
+awk -v max_columns="${settings[columns]}" \
+    -v mark_string="${settings[mark]}" \
+    -v tty="${settings[tty]}" \
     -f ./includes/render_table.awk
 
 exit $?

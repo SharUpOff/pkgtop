@@ -3,18 +3,18 @@ DEFAULT_LINES=25
 DEFAULT_COLUMNS=80
 LIMIT_COLUMNS=80
 
-# the options array is used to store the values parsed from the command line arguments.
-declare -A options
+# the settings array is used to store the values parsed from the command line arguments.
+declare -A settings
 
-# set default options
-options[exclude]=""
-options[other]=0
-options[total]=0
-options[skip]=0
+# set default settings
+settings[exclude]=""
+settings[other]=0
+settings[total]=0
+settings[skip]=0
 
 # detect tty
 test ! -t 1
-options[tty]=$?
+settings[tty]=$?
 
 # process positional arguments: [lines [columns]]
 parse_number()
@@ -31,12 +31,12 @@ parse_number()
 }
 
 # set the lines option if the first argument is a number
-options[lines]="$(parse_number "${1}")"
+settings[lines]="$(parse_number "${1}")"
 
 # process the second argument only if lines option is set
-if [ ! -z "${options[lines]}" ]; then
+if [ ! -z "${settings[lines]}" ]; then
     # set the columns option if the second argument is a number
-    options[columns]="$(parse_number "${2}")"
+    settings[columns]="$(parse_number "${2}")"
 fi
 
 # process keyword arguments
@@ -107,37 +107,37 @@ for arg in $@; do
             exit 0
         ;;
         --other|--show-other|-o)
-            options[other]=1
+            settings[other]=1
         ;;
         --total|--show-total|-t)
-            options[total]=1
+            settings[total]=1
         ;;
         --all|--show-all|-a)
-            options[lines]=-1;
+            settings[lines]=-1;
         ;;
         --raw|-r)
-            options[tty]=1;
+            settings[tty]=1;
         ;;
         --lines|-l)
             declare -A context
             context[name]='lines'
         ;;
         --lines=*)
-            options[lines]="${arg/--lines=}"
+            settings[lines]="${arg/--lines=}"
         ;;
         --columns|-c)
             declare -A context
             context[name]='columns'
         ;;
         --columns=*)
-            options[columns]="${arg/--columns=}"
+            settings[columns]="${arg/--columns=}"
         ;;
         --skip|-s)
             declare -A context
             context[name]='skip'
         ;;
         --skip=*)
-            options[skip]="${arg/--skip=}"
+            settings[skip]="${arg/--skip=}"
         ;;
         --exclude|-e)
             declare -A context
@@ -145,7 +145,7 @@ for arg in $@; do
             context[multiple]=1
         ;;
         --exclude=*)
-            options[exclude]="${options[exclude]} ${arg/--exclude=}"
+            settings[exclude]="${settings[exclude]} ${arg/--exclude=}"
         ;;
         --mark|-m)
             declare -A context
@@ -153,7 +153,7 @@ for arg in $@; do
             context[multiple]=1
         ;;
         --mark=*)
-            options[mark]="${options[mark]} ${arg/--mark=}"
+            settings[mark]="${settings[mark]} ${arg/--mark=}"
         ;;
         *)
             # an option context may be declared by the previous argument,
@@ -161,9 +161,9 @@ for arg in $@; do
             if [ ! -z "${context[name]}" ]; then
                 # the option can take multiple values if the multiple flag is set in the context
                 if [ ! -z "${context[multiple]}" ]; then
-                    options[${context[name]}]="${options[${context[name]}]} ${arg}"
+                    settings[${context[name]}]="${settings[${context[name]}]} ${arg}"
                 else
-                    options[${context[name]}]="${arg}"
+                    settings[${context[name]}]="${arg}"
                 fi
             fi
         ;;
