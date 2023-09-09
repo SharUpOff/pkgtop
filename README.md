@@ -129,6 +129,14 @@ $ pkgtop [lines [columns]] [--skip <count>] [--exclude <name>] [--mark <name>] [
   libaudit-common....................................................   23.00 KiB 
   ```
 
+### macOS
+> :warning: Use `zsh` on `macOS`.
+> This script uses associative arrays introduced in `bash` **>= 4**, while `macOS` have only **3.X.X**.
+
+```zsh
+zsh pkgtop.sh
+```
+
 # Dependencies
 
 ## ArchLinux
@@ -149,32 +157,38 @@ sys     0m0,120s
 ```
 
 # Compatibility
-- ✅ Ubuntu
-  - ✅ 22.04 (TEST OK: 2022-07-16)
-  - ✅ 20.04 (TEST OK: 2022-07-16)
-  - ✅ 18.04 (TEST OK: 2022-07-16)
-  - ✅ 16.04 (TEST OK: 2022-07-16)
-  - ✅ 14.04 (TEST OK: 2022-07-16)
-- ✅ Debian
-  - ✅ 11 (TEST OK: 2022-07-16)
-  - ✅ 10 (TEST OK: 2022-07-16)
-  - ✅ 9 (TEST OK: 2022-07-16)
-- ✅ Fedora
-  - ✅ 37 (TEST OK: 2022-07-16)
-  - ✅ 36 (TEST OK: 2022-07-16)
-  - ✅ 35 (TEST OK: 2022-07-16)
-  - ✅ 34 (TEST OK: 2022-07-16)
-- ✅ RedHat
-  - ✅ 9 (TEST OK: 2022-07-16)
-  - ✅ 8 (TEST OK: 2022-07-16)
-- ✅ CentOS
-  - ✅ 7 (TEST OK: 2022-07-16)
-- ✅ OpenSUSE
-  - ✅ tumbleweed (TEST OK: 2022-07-16)
-  - ✅ leap
-    - ✅ 15 (TEST OK: 2022-07-16)
-- ✅ ArchLinux (TEST OK: 2022-07-16)
-- ✅ OpenWRT (TEST OK: 2022-07-16)
+- [x] GNU/Linux
+  - [x] Ubuntu
+    - [x] 22.04 (TEST OK: 2022-07-16)
+    - [x] 20.04 (TEST OK: 2022-07-16)
+    - [x] 18.04 (TEST OK: 2022-07-16)
+    - [x] 16.04 (TEST OK: 2022-07-16)
+    - [x] 14.04 (TEST OK: 2022-07-16)
+  - [x] Debian
+    - [x] 11 (TEST OK: 2022-07-16)
+    - [x] 10 (TEST OK: 2022-07-16)
+    - [x] 9 (TEST OK: 2022-07-16)
+  - [x] Fedora
+    - [x] 37 (TEST OK: 2022-07-16)
+    - [x] 36 (TEST OK: 2022-07-16)
+    - [x] 35 (TEST OK: 2022-07-16)
+    - [x] 34 (TEST OK: 2022-07-16)
+  - [x] RedHat
+    - [x] 9 (TEST OK: 2022-07-16)
+    - [x] 8 (TEST OK: 2022-07-16)
+  - [x] CentOS
+    - [x] 7 (TEST OK: 2022-07-16)
+  - [x] OpenSUSE
+    - [x] tumbleweed (TEST OK: 2022-07-16)
+    - [x] leap
+      - [x] 15 (TEST OK: 2022-07-16)
+  - [x] ArchLinux (TEST OK: 2022-07-16)
+  - [x] OpenWRT (TEST OK: 2022-07-16)
+- [x] Other operating systems
+  - [x] macOS
+    - [x] 13 (TEST OK: 2023-09-09)
+- [x] Multiplatform package management systems
+  - [x] Homebrew (TEST OK: 2023-09-09)
 
 # Contribution
 🛠 You are welcome to add support for other distributions, fix bugs or improve functionality. Please, do not forget to add tests.
@@ -189,6 +203,18 @@ if command -v package-manager &> /dev/null; then
 
     # prevent other plugins from running
     exit $?  
+fi
+```
+
+## Add multiplatform package management system support
+Create a plugin file `src/includes/multiplatform/yourpackagesystem/01_package-manager.sh`
+```bash
+# YourPackageSystem (package-manager)
+if command -v package-manager &> /dev/null; then
+    # write installed packages to the STDOUT using format: %{bytes}d %{name}s\n
+    package-manager --installed --format='%{bytes}d %{name}s\n'
+
+    # other plugins can also be run to combine the results
 fi
 ```
 

@@ -8,18 +8,18 @@ DEFAULT_LINES=25
 DEFAULT_COLUMNS=80
 LIMIT_COLUMNS=80
 
-# the options array is used to store the values parsed from the command line arguments.
-declare -A options
+# the settings array is used to store the values parsed from the command line arguments.
+declare -A settings
 
-# set default options
-options[exclude]=""
-options[other]=0
-options[total]=0
-options[skip]=0
+# set default settings
+settings[exclude]=""
+settings[other]=0
+settings[total]=0
+settings[skip]=0
 
 # detect tty
 test ! -t 1
-options[tty]=$?
+settings[tty]=$?
 
 # process positional arguments: [lines [columns]]
 parse_number()
@@ -36,12 +36,12 @@ parse_number()
 }
 
 # set the lines option if the first argument is a number
-options[lines]="$(parse_number "${1}")"
+settings[lines]="$(parse_number "${1}")"
 
 # process the second argument only if lines option is set
-if [ ! -z "${options[lines]}" ]; then
+if [ ! -z "${settings[lines]}" ]; then
     # set the columns option if the second argument is a number
-    options[columns]="$(parse_number "${2}")"
+    settings[columns]="$(parse_number "${2}")"
 fi
 
 # process keyword arguments
@@ -108,41 +108,41 @@ for arg in $@; do
             exit 0
         ;;
         --version|-v)
-            echo "1.0.0"
+            echo "1.1.0"
             exit 0
         ;;
         --other|--show-other|-o)
-            options[other]=1
+            settings[other]=1
         ;;
         --total|--show-total|-t)
-            options[total]=1
+            settings[total]=1
         ;;
         --all|--show-all|-a)
-            options[lines]=-1;
+            settings[lines]=-1;
         ;;
         --raw|-r)
-            options[tty]=1;
+            settings[tty]=1;
         ;;
         --lines|-l)
             declare -A context
             context[name]='lines'
         ;;
         --lines=*)
-            options[lines]="${arg/--lines=}"
+            settings[lines]="${arg/--lines=}"
         ;;
         --columns|-c)
             declare -A context
             context[name]='columns'
         ;;
         --columns=*)
-            options[columns]="${arg/--columns=}"
+            settings[columns]="${arg/--columns=}"
         ;;
         --skip|-s)
             declare -A context
             context[name]='skip'
         ;;
         --skip=*)
-            options[skip]="${arg/--skip=}"
+            settings[skip]="${arg/--skip=}"
         ;;
         --exclude|-e)
             declare -A context
@@ -150,7 +150,7 @@ for arg in $@; do
             context[multiple]=1
         ;;
         --exclude=*)
-            options[exclude]="${options[exclude]} ${arg/--exclude=}"
+            settings[exclude]="${settings[exclude]} ${arg/--exclude=}"
         ;;
         --mark|-m)
             declare -A context
@@ -158,7 +158,7 @@ for arg in $@; do
             context[multiple]=1
         ;;
         --mark=*)
-            options[mark]="${options[mark]} ${arg/--mark=}"
+            settings[mark]="${settings[mark]} ${arg/--mark=}"
         ;;
         *)
             # an option context may be declared by the previous argument,
@@ -166,9 +166,9 @@ for arg in $@; do
             if [ ! -z "${context[name]}" ]; then
                 # the option can take multiple values if the multiple flag is set in the context
                 if [ ! -z "${context[multiple]}" ]; then
-                    options[${context[name]}]="${options[${context[name]}]} ${arg}"
+                    settings[${context[name]}]="${settings[${context[name]}]} ${arg}"
                 else
-                    options[${context[name]}]="${arg}"
+                    settings[${context[name]}]="${arg}"
                 fi
             fi
         ;;
@@ -182,8 +182,8 @@ for arg in $@; do
     fi
 done
 
-# get terminal size if at least one of options[lines] or options[columns] is not set
-if [ -z "${options[lines]}" ] || [ -z "${options[columns]}" ]; then
+# get terminal size if at least one of settings[lines] or settings[columns] is not set
+if [ -z "${settings[lines]}" ] || [ -z "${settings[columns]}" ]; then
 
     # try to refresh LINES and COLUMNS if at least one of them is not set
     if [ -z "${LINES}" ] || [ -z "${COLUMNS}" ]; then
@@ -200,10 +200,25 @@ if [ -z "${options[lines]}" ] || [ -z "${options[columns]}" ]; then
     fi
 
     # get number of lines if the custom value is not set
-    if [ -z "${options[lines]}" ]; then
-        # source .bashrc (if exists) to import bash prompt if PS1 is not set
-        if [ -z "${PS1}" ] && [ -f ~/.bashrc ]; then
-            source ~/.bashrc &> /dev/null
+    if [ -z "${settings[lines]}" ]; then
+        # if PS1 is not set
+        if [ -z "${PS1}" ]; then
+            SHELL_NAME="${SHELL-$(ps $$ -o comm="")}"
+
+            case "${SHELL_NAME}" in
+                */bash)
+                    # source .bashrc (if exists) to import bash prompt
+                    if [ -f "${HOME}/.bashrc" ]; then
+                        source "${HOME}/.bashrc" &> /dev/null
+                    fi
+                ;;
+                */zsh)
+                    # source .zshrc (if exists) to import zsh prompt
+                    if [ -f "${HOME}/.zshrc" ]; then
+                        source "${HOME}/.zshrc" &> /dev/null
+                    fi
+                ;;
+            esac
         fi
 
         # assume prompt size as number of lines in PS1
@@ -213,21 +228,40 @@ if [ -z "${options[lines]}" ] || [ -z "${options[columns]}" ]; then
         terminal_lines="${LINES:-$(command -v tput &>/dev/null && tput lines || echo ${DEFAULT_LINES})}"
 
         # subtract prompt height from terminal height
-        options[lines]="$[${terminal_lines} - ${prompt_lines}]"
+        settings[lines]="$[${terminal_lines} - ${prompt_lines}]"
     fi
 
     # get number of columns if the custom value is not set
-    if [ -z "${options[columns]}" ]; then
+    if [ -z "${settings[columns]}" ]; then
         # try to get the number of terminal columns or use default
-        options[columns]="${COLUMNS:-$(command -v tput &>/dev/null && tput cols || echo ${DEFAULT_COLUMNS})}"
+        settings[columns]="${COLUMNS:-$(command -v tput &>/dev/null && tput cols || echo ${DEFAULT_COLUMNS})}"
 
         # limit columns
-        options[columns]="$((options[columns] > LIMIT_COLUMNS ? LIMIT_COLUMNS : options[columns]))"
+        settings[columns]="$((settings[columns] > LIMIT_COLUMNS ? LIMIT_COLUMNS : settings[columns]))"
     fi
 fi
 
 # Output: %{bytes}d %{name}s
 (
+    # homebrew
+    if command -v brew &> /dev/null; then
+        # get installed packages
+        brew list --formula |
+        # get installed directories
+        xargs brew --prefix |
+        # get directories size
+        xargs du -Lks |
+        # format output: %{bytes}d %{name}\n
+        awk '{
+            sub("^.+/", "", $2);
+
+            bytes = $1 * 1024;
+            name = sprintf("homebrew/%s", $2);
+
+            printf("%d %s\n", bytes, name);
+        }'
+    fi
+
     # ArchLinux (expac)
     # https://man.archlinux.org/man/community/expac/expac.1.en
     if command -v expac &> /dev/null; then
@@ -275,6 +309,24 @@ fi
     if command -v rpm &> /dev/null; then
         # get installed packages in format: %{bytes}d %{name}\n
         rpm --query --all --queryformat='%{size} %{name}\n'
+
+        # prevent other plugins from running
+        exit $?
+    fi
+    # macOS (Applications)
+    if [[ -d /Applications ]]; then
+        # get directories size
+        du -Lks /Applications/*.app |
+        # format output: %{bytes}d %{name}\n
+        awk '{
+            sub("^.+/", "", $2);
+            sub(".app$", "", $2);
+
+            bytes = $1 * 1024;
+            name = $2;
+
+            printf("%d %s\n", bytes, name);
+        }'
 
         # prevent other plugins from running
         exit $?
@@ -329,11 +381,11 @@ fi
 sort -rn |
 
 # Output: %{bytes}d %7.2{size}f %{unit}s %{name}s
-awk -v max_lines="${options[lines]}" \
-    -v skip_lines="${options[skip]}" \
-    -v show_other="${options[other]}" \
-    -v show_total="${options[total]}" \
-    -v exclude_string="${options[exclude]}" \
+awk -v max_lines="${settings[lines]}" \
+    -v skip_lines="${settings[skip]}" \
+    -v show_other="${settings[other]}" \
+    -v show_total="${settings[total]}" \
+    -v exclude_string="${settings[exclude]}" \
     'BEGIN {
         other_bytes = 0;
         total_bytes = 0;
@@ -403,10 +455,20 @@ awk -v max_lines="${options[lines]}" \
 # Order filtered entries by size
 sort -rn |
 
+# Output: %{bytes}d %7.2{size}f %{unit}s %{name}s %{name_bytes}d %{name_characters}d
+awk '{
+    name = $4;
+    char_count = "wc -m";
+
+    printf("%s %s ", $0, length(name));
+    printf(name) | char_count;
+    close(char_count);
+}' |
+
 # Render Table
-awk -v max_columns="${options[columns]}" \
-    -v mark_string="${options[mark]}" \
-    -v tty="${options[tty]}" \
+awk -v max_columns="${settings[columns]}" \
+    -v mark_string="${settings[mark]}" \
+    -v tty="${settings[tty]}" \
     'BEGIN {
         cl_red_bold = "\033[1;41m";
         cl_green_bold = "\033[1;42m";
@@ -437,6 +499,8 @@ awk -v max_columns="${options[columns]}" \
         size = $2;
         unit = $3;
         name = $4;
+        name_bytes = $5;
+        name_characters = $6;
 
         if (!max_bytes) {
             max_bytes = bytes;
@@ -448,8 +512,7 @@ awk -v max_columns="${options[columns]}" \
             mark = " ";
         }
 
-        name_with_dots = sprintf(sprintf("%%.%ds", dotted_line_length), name dotted_line);
-        output = sprintf("%s %7.2f %-3s%s", name_with_dots, size, unit, mark);
+        output = sprintf("%s %7.2f %-3s%s", dotted_line, size, unit, mark);
 
         if (tty && max_bytes) {
             colored_columns = int(bytes / max_bytes * max_columns);
@@ -465,10 +528,16 @@ awk -v max_columns="${options[columns]}" \
                 color = cl_red_bold;
             }
 
-            print(color colored_output cl_default_bold default_output cl_default);
-        } else {
-            print(output);
+            output = (color colored_output cl_default_bold default_output cl_default);
         }
+
+        char_size = name_bytes / name_characters;
+
+        for (i = 1; i <= name_bytes; i += char_size) {
+            sub("\\.", substr(name, i, char_size), output);
+        }
+
+        print(output);
     }'
 
 exit $?
