@@ -1,126 +1,145 @@
 version: '3'
 
 services:
-  test-archlinux:
+  archlinux:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     image: archlinux:base-devel
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/archlinux.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-ubuntu-22.04:
+      - ./fixtures/archlinux:/fixtures
+  ubuntu-22.04:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     image: ubuntu:22.04
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/ubuntu-22.04.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-ubuntu-20.04:
+      - ./fixtures/ubuntu-22.04:/fixtures
+  ubuntu-20.04:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     image: ubuntu:20.04
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/ubuntu-20.04.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-ubuntu-18.04:
-    image: ubuntu:20.04
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/ubuntu-18.04.txt"]
+      - ./fixtures/ubuntu-20.04:/fixtures
+  ubuntu-18.04:
+    extends:
+      file: docker-tests-base.yml
+      service: update
+    image: ubuntu:18.04
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-ubuntu-16.04:
+      - ./fixtures/ubuntu-18.04:/fixtures
+  ubuntu-16.04:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     image: ubuntu:16.04
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/ubuntu-16.04.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-ubuntu-14.04:
-    image: ubuntu:16.04
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/ubuntu-14.04.txt"]
+      - ./fixtures/ubuntu-16.04:/fixtures
+  ubuntu-14.04:
+    extends:
+      file: docker-tests-base.yml
+      service: update
+    image: ubuntu:14.04
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-debian-11:
+      - ./fixtures/ubuntu-14.04:/fixtures
+  debian-11:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     image: debian:11
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/debian-11.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-debian-10:
+      - ./fixtures/debian-11:/fixtures
+  debian-10:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     image: debian:10
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/debian-10.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-debian-9:
+      - ./fixtures/debian-10:/fixtures
+  debian-9:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     image: debian:9
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/debian-9.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-openwrtorg:
+      - ./fixtures/debian-9:/fixtures
+  openwrtorg:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     build:
       context: ./docker/openwrtorg
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/openwrtorg.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-fedora-37:
+      - ./fixtures/openwrtorg:/fixtures
+  fedora-37:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     build:
       context: ./docker/fedora/37
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/fedora-37.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-fedora-36:
+      - ./fixtures/fedora-37:/fixtures
+  fedora-36:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     build:
       context: ./docker/fedora/36
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/fedora-36.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-fedora-35:
+      - ./fixtures/fedora-36:/fixtures
+  fedora-35:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     build:
       context: ./docker/fedora/35
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/fedora-35.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-fedora-34:
+      - ./fixtures/fedora-35:/fixtures
+  fedora-34:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     build:
       context: ./docker/fedora/34
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/fedora-34.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-centos-7:
+      - ./fixtures/fedora-34:/fixtures
+  centos-7:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     image: centos:7
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/centos-7.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-redhat-9:
+      - ./fixtures/centos-7:/fixtures
+  redhat-9:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     build:
       context: ./docker/redhat/9
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/redhat-9.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
-  test-redhat-8:
+      - ./fixtures/redhat-9:/fixtures
+  redhat-8:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     build:
       context: ./docker/redhat/8
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/redhat-8.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
+      - ./fixtures/redhat-8:/fixtures
   opensuse-tumbleweed:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     build:
       context: ./docker/opensuse/tumbleweed
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/opensuse-tumbleweed.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
+      - ./fixtures/opensuse-tumbleweed:/fixtures
   opensuse-leap-15:
+    extends:
+      file: docker-tests-base.yml
+      service: update
     build:
       context: ./docker/opensuse/leap/15
-    command: ["bash", "-c", "bash /tmp/dist/pkgtop.sh 25 80 -r > /tmp/data/opensuse-leap-15.txt"]
     volumes:
-      - ./dist:/tmp/dist:ro
-      - ./data:/tmp/data
+      - ./fixtures/opensuse-leap-15:/fixtures

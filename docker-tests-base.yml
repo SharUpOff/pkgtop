@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  dist:
+    volumes:
+      - ./dist:/dist:ro
+  run:
+    extends:
+      service: dist
+    command: ["bash", "-c", "bash /dist/pkgtop.sh 25 80 -r | diff /fixtures/output.txt -"]
+  update:
+    extends:
+      service: dist
+    command: ["bash", "-c", "bash /dist/pkgtop.sh 25 80 -r > /fixtures/output.txt"]
