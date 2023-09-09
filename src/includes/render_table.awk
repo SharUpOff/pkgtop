@@ -28,6 +28,8 @@ BEGIN {
     size = $2;
     unit = $3;
     name = $4;
+    name_bytes = $5;
+    name_characters = $6;
 
     if (!max_bytes) {
         max_bytes = bytes;
@@ -39,8 +41,7 @@ BEGIN {
         mark = " ";
     }
 
-    name_with_dots = sprintf(sprintf("%%.%ds", dotted_line_length), name dotted_line);
-    output = sprintf("%s %7.2f %-3s%s", name_with_dots, size, unit, mark);
+    output = sprintf("%s %7.2f %-3s%s", dotted_line, size, unit, mark);
 
     if (tty && max_bytes) {
         colored_columns = int(bytes / max_bytes * max_columns);
@@ -56,8 +57,14 @@ BEGIN {
             color = cl_red_bold;
         }
 
-        print(color colored_output cl_default_bold default_output cl_default);
-    } else {
-        print(output);
+        output = (color colored_output cl_default_bold default_output cl_default);
     }
+
+    char_size = name_bytes / name_characters;
+
+    for (i = 1; i <= name_bytes; i += char_size) {
+        sub("\\.", substr(name, i, char_size), output);
+    }
+
+    print(output);
 }

@@ -31,6 +31,9 @@ awk -v max_lines="${settings[lines]}" \
 # Order filtered entries by size
 sort -rn |
 
+# Output: %{bytes}d %7.2{size}f %{unit}s %{name}s %{name_bytes}d %{name_characters}d
+awk -f ./includes/name_size.awk |
+
 # Render Table
 awk -v max_columns="${settings[columns]}" \
     -v mark_string="${settings[mark]}" \
