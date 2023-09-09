@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-  build-ubuntu-22.04:
-    image: ubuntu:22.04
-    command: ["bash", "-c", "bash /tmp/build/src/build.sh"]
+  build-bash:
+    image: bash
+    command: ["bash", "/tmp/build/src/build.sh"]
     volumes:
       - .:/tmp/build
