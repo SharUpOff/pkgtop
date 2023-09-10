@@ -159,30 +159,30 @@ sys     0m0,120s
 # Compatibility
 - [x] GNU/Linux
   - [x] Ubuntu
-    - [x] 22.04 (TEST OK: 2022-07-16)
-    - [x] 20.04 (TEST OK: 2022-07-16)
-    - [x] 18.04 (TEST OK: 2022-07-16)
-    - [x] 16.04 (TEST OK: 2022-07-16)
-    - [x] 14.04 (TEST OK: 2022-07-16)
+    - [x] 22.04 (TEST OK: 2023-09-10)
+    - [x] 20.04 (TEST OK: 2023-09-10)
+    - [x] 18.04 (TEST OK: 2023-09-10)
+    - [x] 16.04 (TEST OK: 2023-09-10)
+    - [x] 14.04 (TEST OK: 2023-09-10)
   - [x] Debian
-    - [x] 11 (TEST OK: 2022-07-16)
-    - [x] 10 (TEST OK: 2022-07-16)
-    - [x] 9 (TEST OK: 2022-07-16)
+    - [x] 11 (TEST OK: 2023-09-10)
+    - [x] 10 (TEST OK: 2023-09-10)
+    - [x] 9 (TEST OK: 2023-09-10)
   - [x] Fedora
-    - [x] 37 (TEST OK: 2022-07-16)
-    - [x] 36 (TEST OK: 2022-07-16)
-    - [x] 35 (TEST OK: 2022-07-16)
-    - [x] 34 (TEST OK: 2022-07-16)
+    - [x] 37 (TEST OK: 2023-09-10)
+    - [x] 36 (TEST OK: 2023-09-10)
+    - [x] 35 (TEST OK: 2023-09-10)
+    - [x] 34 (TEST OK: 2023-09-10)
   - [x] RedHat
-    - [x] 9 (TEST OK: 2022-07-16)
-    - [x] 8 (TEST OK: 2022-07-16)
+    - [x] 9 (TEST OK: 2023-09-10)
+    - [x] 8 (TEST OK: 2023-09-10)
   - [x] CentOS
-    - [x] 7 (TEST OK: 2022-07-16)
+    - [x] 7 (TEST OK: 2023-09-10)
   - [x] OpenSUSE
-    - [x] tumbleweed (TEST OK: 2022-07-16)
+    - [x] tumbleweed (TEST OK: 2023-09-10)
     - [x] leap
-      - [x] 15 (TEST OK: 2022-07-16)
-  - [x] ArchLinux (TEST OK: 2022-07-16)
+      - [x] 15 (TEST OK: 2023-09-10)
+  - [x] ArchLinux (TEST OK: 2023-09-10)
   - [x] OpenWRT (TEST OK: 2022-07-16)
 - [x] Other operating systems
   - [x] macOS
